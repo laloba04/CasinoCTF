@@ -6,12 +6,18 @@ import { api } from '../utils/api';
 import BlackjackTable from '../components/game/blackjack/BlackjackTable';
 import SlotsGame from '../components/game/slots/SlotsGame';
 import RouletteTable from '../components/game/roulette/RouletteTable';
+import HoldemTable from '../components/game/holdem/HoldemTable';
+import BaccaratTable from '../components/game/baccarat/BaccaratTable';
+import CrapsTable from '../components/game/craps/CrapsTable';
 import ChatPanel from '../components/game/shared/ChatPanel';
 
 const GAME_COMPONENTS = {
   blackjack: BlackjackTable,
   slots: SlotsGame,
   roulette: RouletteTable,
+  holdem: HoldemTable,
+  baccarat: BaccaratTable,
+  craps: CrapsTable,
 };
 
 export default function GamePage() {

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { SocketProvider } from './hooks/useSocket';
+import { I18nProvider } from './hooks/useI18n';
 import Navbar from './components/ui/Navbar';
 import AuthForm from './components/auth/AuthForm';
 import HomePage from './pages/HomePage';
@@ -9,11 +10,12 @@ import GamePage from './pages/GamePage';
 import ScoreboardPage from './pages/ScoreboardPage';
 import CTFPage from './pages/CTFPage';
 import HistoryPage from './pages/HistoryPage';
+import ProfilePage from './pages/ProfilePage';
 import './index.css';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="text-center" style={{ padding: '4rem' }}>⏳ Loading...</div>;
+  if (loading) return <div className="text-center" style={{ padding: '4rem' }}>⏳</div>;
   return user ? children : <Navigate to="/auth" />;
 }
 
@@ -34,6 +36,7 @@ function AppRoutes() {
         <Route path="/scoreboard" element={<ProtectedRoute><ScoreboardPage /></ProtectedRoute>} />
         <Route path="/ctf" element={<ProtectedRoute><CTFPage /></ProtectedRoute>} />
         <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       </Routes>
     </SocketProvider>
   );
@@ -42,9 +45,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </I18nProvider>
     </BrowserRouter>
   );
 }

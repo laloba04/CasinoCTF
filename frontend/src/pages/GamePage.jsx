@@ -1,0 +1,71 @@
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSocket } from '../hooks/useSocket';
+import { useAuth } from '../hooks/useAuth';
+import { api } from '../utils/api';
+import BlackjackTable from '../components/game/blackjack/BlackjackTable';
+import SlotsGame from '../components/game/slots/SlotsGame';
+import RouletteTable from '../components/game/roulette/RouletteTable';
+import ChatPanel from '../components/game/shared/ChatPanel';
+
+const GAME_COMPONENTS = {
+  blackjack: BlackjackTable,
+  slots: SlotsGame,
+  roulette: RouletteTable,
+};
+
+export default function GamePage() {
+  const { roomId } = useParams();
+  const { joinRoom, leaveRoom, gameState, emit } = useSocket();
+  const { user, refreshBalance } = useAuth();
+  const [room, setRoom] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (roomId === 'slots') {
+      setRoom({ id: 'slots', game_type: 'slots', name: 'Quick Slots' });
+      setLoading(false);
+      return;
+    }
+    api.getRoom(roomId).then(data => {
+      setRoom(data.room);
+      joinRoom(roomId);
+      const joinEvent = `${data.room.game_type}_join`;
+      setTimeout(() => emit(joinEvent, { room_id: roomId }), 500);
+    }).catch(console.error).finally(() => setLoading(false));
+
+    return () => { if (roomId !== 'slots') leaveRoom(roomId); };
+  }, [roomId]);
+
+  useEffect(() => {
+    if (gameState?.phase === 'payout' || gameState?.total_win !== undefined) {
+      refreshBalance();
+    }
+  }, [gameState?.phase, gameState?.total_win]);
+
+  if (loading) return <div className="container text-center" style={{ padding: '4rem' }}>⏳ Loading...</div>;
+  if (!room) return <div className="container text-center" style={{ padding: '4rem' }}>❌ Room not found</div>;
+
+  const GameComponent = GAME_COMPONENTS[room.game_type] || (() => (
+    <div className="card text-center" style={{ padding: '3rem' }}>
+      <p style={{ fontSize: '3rem' }}>🚧</p>
+      <p className="text-muted mt-2">{room.game_type} coming soon!</p>
+    </div>
+  ));
+
+  return (
+    <div className="container" style={{ paddingTop: '1rem', paddingBottom: '2rem' }}>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{room.name}</h1>
+          <p className="page-subtitle">{room.game_type} table{room.id !== 'slots' ? ` • Room ${room.id}` : ''}</p>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: room.game_type !== 'slots' ? '1fr 300px' : '1fr', gap: '1.5rem' }}>
+        <GameComponent gameState={gameState} emit={emit} user={user} room={room} refreshBalance={refreshBalance} />
+        {room.game_type !== 'slots' && <ChatPanel />}
+      </div>
+    </div>
+  );
+}

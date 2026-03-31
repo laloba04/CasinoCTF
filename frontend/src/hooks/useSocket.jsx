@@ -1,0 +1,69 @@
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { io } from 'socket.io-client';
+import { useAuth } from './useAuth';
+
+const SocketContext = createContext(null);
+
+export function SocketProvider({ children }) {
+  const { user } = useAuth();
+  const socketRef = useRef(null);
+  const [connected, setConnected] = useState(false);
+  const [gameState, setGameState] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [roomPlayers, setRoomPlayers] = useState({});
+
+  useEffect(() => {
+    if (!user) return;
+
+    const socket = io('/', {
+      auth: { user_id: user.id, username: user.username },
+      transports: ['websocket', 'polling']
+    });
+
+    socket.on('connect', () => setConnected(true));
+    socket.on('disconnect', () => setConnected(false));
+    socket.on('game_state', (state) => setGameState(state));
+    socket.on('chat_message', (msg) => setChatMessages(prev => [...prev.slice(-99), msg]));
+    socket.on('room_joined', (data) => setRoomPlayers(data.players || {}));
+    socket.on('player_left', () => {});
+    socket.on('error', (err) => console.error('Socket error:', err));
+    socket.on('slots_result', (result) => setGameState(result));
+    socket.on('roulette_result', (result) => setGameState(prev => ({ ...prev, ...result })));
+
+    socketRef.current = socket;
+    return () => socket.disconnect();
+  }, [user]);
+
+  const emit = (event, data) => {
+    if (socketRef.current) socketRef.current.emit(event, data);
+  };
+
+  const joinRoom = (roomId) => {
+    emit('join_room', { room_id: roomId });
+    setChatMessages([]);
+    setGameState(null);
+  };
+
+  const leaveRoom = (roomId) => {
+    emit('leave_room', { room_id: roomId });
+    setGameState(null);
+    setChatMessages([]);
+  };
+
+  const sendChat = (message) => emit('chat_message', { message });
+
+  return (
+    <SocketContext.Provider value={{
+      connected, gameState, setGameState, chatMessages, roomPlayers,
+      emit, joinRoom, leaveRoom, sendChat
+    }}>
+      {children}
+    </SocketContext.Provider>
+  );
+}
+
+export function useSocket() {
+  const ctx = useContext(SocketContext);
+  if (!ctx) throw new Error('useSocket must be used within SocketProvider');
+  return ctx;
+}

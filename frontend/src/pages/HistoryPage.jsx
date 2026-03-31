@@ -62,7 +62,7 @@ export default function HistoryPage() {
                       padding: '0.15rem 0.5rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700,
                       background: g.result === 'win' ? 'var(--accent-green-dim)' : g.result === 'push' ? 'var(--accent-gold-dim)' : 'var(--accent-red-dim)',
                       color: g.result === 'win' ? 'var(--accent-green)' : g.result === 'push' ? 'var(--accent-gold)' : 'var(--accent-red)'
-                    }}>{g.result?.toUpperCase()}</span>
+                    }}>{t(g.result) ? t(g.result).toUpperCase() : g.result?.toUpperCase()}</span>
                   </td>
                   <td className={g.payout > 0 ? 'text-green' : ''}>${g.payout}</td>
                   <td className="text-muted">{new Date(g.created_at).toLocaleDateString()}</td>

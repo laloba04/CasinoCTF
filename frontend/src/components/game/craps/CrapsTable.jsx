@@ -1,19 +1,21 @@
 import { useState } from 'react';
-
-const BET_TYPES = [
-  { key: 'pass', label: '✅ Pass Line', desc: 'Win on 7/11, lose on 2/3/12', payout: '1:1' },
-  { key: 'dont_pass', label: '❌ Don\'t Pass', desc: 'Opposite of Pass', payout: '1:1' },
-  { key: 'come', label: '🟢 Come', desc: 'Like Pass after point', payout: '1:1' },
-  { key: 'dont_come', label: '🔴 Don\'t Come', desc: 'Opposite of Come', payout: '1:1' },
-  { key: 'field', label: '🌾 Field', desc: 'Win on 2,3,4,9,10,11,12', payout: '1:1 / 2:1' },
-  { key: 'any_seven', label: '7️⃣ Any Seven', desc: 'Next roll is 7', payout: '4:1' },
-  { key: 'any_craps', label: '💀 Any Craps', desc: 'Next roll is 2/3/12', payout: '7:1' },
-];
+import { useI18n } from '../../../hooks/useI18n';
 
 export default function CrapsTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(25);
+  const { t } = useI18n();
   const state = gameState || {};
   const rid = room?.id;
+
+  const BET_TYPES = [
+    { key: 'pass', label: `✅ ${t('passLine')}`, desc: 'Win on 7/11, lose on 2/3/12', payout: '1:1' },
+    { key: 'dont_pass', label: `❌ ${t('dontPass')}`, desc: 'Opposite of Pass', payout: '1:1' },
+    { key: 'come', label: `🟢 ${t('come')}`, desc: 'Like Pass after point', payout: '1:1' },
+    { key: 'dont_come', label: `🔴 ${t('dontCome')}`, desc: 'Opposite of Come', payout: '1:1' },
+    { key: 'field', label: `🌾 ${t('field')}`, desc: 'Win on 2,3,4,9,10,11,12', payout: '1:1 / 2:1' },
+    { key: 'any_seven', label: `7️⃣ ${t('anySeven')}`, desc: 'Next roll is 7', payout: '4:1' },
+    { key: 'any_craps', label: `💀 ${t('anyCraps')}`, desc: 'Next roll is 2/3/12', payout: '7:1' },
+  ];
 
   const placeBet = (type) => {
     emit('craps_bet', { type, amount: betAmount, room_id: rid });
@@ -27,7 +29,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
         {/* Point indicator */}
         <div className="text-center mb-2">
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            {state.point ? `Point: ${state.point}` : 'Come Out Roll'}
+            {state.point ? `${t('point')}: ${state.point}` : t('comeOutRoll')}
           </div>
 
           {/* Dice display */}
@@ -69,7 +71,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
               background: 'var(--accent-gold-dim)', border: '2px solid var(--accent-gold)',
               color: 'var(--accent-gold)', fontWeight: 800, fontSize: '1.1rem'
             }}>
-              🎯 Point: {state.point}
+              🎯 {t('point')}: {state.point}
             </div>
           )}
         </div>
@@ -78,7 +80,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
 
         {/* Active bets display */}
         <div className="text-center">
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>YOUR BETS</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{t('yourBets')}</div>
           {state.my_bets && Object.keys(state.my_bets).length > 0 ? (
             <div className="flex gap-1 justify-center" style={{ flexWrap: 'wrap' }}>
               {Object.entries(state.my_bets).map(([type, amount]) => (
@@ -92,7 +94,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
               ))}
             </div>
           ) : (
-            <p className="text-muted" style={{ fontSize: '0.85rem' }}>No bets placed yet</p>
+            <p className="text-muted" style={{ fontSize: '0.85rem' }}>{t('noBetsYet')}</p>
           )}
         </div>
 
@@ -107,7 +109,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
                   background: d.won ? 'var(--accent-green-dim)' : 'var(--accent-red-dim)',
                   color: d.won ? 'var(--accent-green)' : 'var(--accent-red)'
                 }}>
-                  {d.type}: {d.won ? `Won $${d.payout}` : `Lost $${d.amount}`}
+                  {d.type}: {d.won ? `+ $${d.payout}` : `- $${d.amount}`}
                 </div>
               ))}
             </div>
@@ -117,7 +119,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
 
       {/* Bet Board */}
       <div className="card" style={{ marginTop: '1rem' }}>
-        <div className="card-header">Place Your Bets</div>
+        <div className="card-header">{t('placeYourBets')}</div>
         <div className="flex gap-1 mb-2">
           {[10, 25, 50, 100, 250].map(v => (
             <button key={v} className={`chip chip-${v <= 25 ? 10 : v <= 50 ? 25 : v <= 100 ? 50 : 100}`}
@@ -138,7 +140,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
         </div>
 
         <button className="btn btn-gold btn-lg" onClick={rollDice} style={{ width: '100%' }}>
-          🎲 Roll the Dice!
+          🎲 {t('rollDice')}
         </button>
       </div>
     </div>

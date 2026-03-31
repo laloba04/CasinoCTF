@@ -24,6 +24,7 @@ La plataforma permite a los jugadores:
 - Competir en el scoreboard global
 - Chatear en mesa con otros jugadores (Optimizado para móvil)
 - **Experiencia PWA**: Instalar en el móvil como una app nativa, acceso rápido y diseño responsive.
+- **Soporte Multi-idioma (i18n)**: Interfaz completamente traducida (Inglés y Español) en tiempo real.
 
 El sistema también incluye un **panel CTF** con 9 vulnerabilidades OWASP intencionadas, hints progresivos y writeups educativos para aprender seguridad ofensiva y defensiva.
 
@@ -396,6 +397,7 @@ casino-ctf/
 ### Frontend
 - **React 18** — Componentes de interfaz con hooks
 - **Vite + PWA Plugin** — Tooling rápido con soporte para Progressive Web App
+- **i18n Custom Context** — Internacionalización dinámica mediante diccionarios y providers locales
 - **Service Workers** — Cacheo de assets para carga instantánea y funcionamiento offline básico
 - **Web App Manifest** — Configuración para instalación en dispositivos móviles y escritorio
 - **TailwindCSS** — Diseño "Mobile First" con paleta personalizada de casino

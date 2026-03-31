@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import PlayingCard from '../shared/Card';
+import { useI18n } from '../../../hooks/useI18n';
 
 export default function HoldemTable({ gameState, emit, user, room }) {
   const [raiseAmount, setRaiseAmount] = useState(50);
+  const { t } = useI18n();
   const state = gameState || {};
   const phase = state.phase || 'waiting';
   const myId = String(user?.id);
@@ -25,7 +27,7 @@ export default function HoldemTable({ gameState, emit, user, room }) {
         {/* Community Cards */}
         <div className="text-center mb-2">
           <div className="text-muted" style={{ fontSize: '0.8rem', marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            {PHASE_NAMES[phase] || phase} {state.pot ? `• Pot: $${state.pot}` : ''}
+            {PHASE_NAMES[phase] || phase} {state.pot ? `• ${t('pot')}: $${state.pot}` : ''}
           </div>
           <div className="hand" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', minHeight: '100px' }}>
             {(state.community || []).map((card, i) => (
@@ -33,7 +35,7 @@ export default function HoldemTable({ gameState, emit, user, room }) {
             ))}
             {phase === 'waiting' && (
               <div style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', fontSize: '0.9rem' }}>
-                Waiting for players to start...
+                {t('waitingForPlayers')}
               </div>
             )}
           </div>
@@ -54,7 +56,7 @@ export default function HoldemTable({ gameState, emit, user, room }) {
                 fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.4rem',
                 color: uid === myId ? 'var(--accent-gold)' : 'var(--text-secondary)'
               }}>
-                {player.username} {uid === myId ? '(You)' : ''}
+                {player.username === 'House Dealer' ? t('houseDealer') : player.username} {uid === myId ? `(${t('you')})` : ''}
                 {state.current_player === uid && ' ◄'}
                 {player.folded && ' 🚫'}
               </div>
@@ -67,8 +69,8 @@ export default function HoldemTable({ gameState, emit, user, room }) {
               </div>
 
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Stack: ${player.stack || 0}
-                {player.current_bet > 0 && <span className="text-gold"> • Bet: ${player.current_bet}</span>}
+                {t('stack')}: ${player.stack || 0}
+                {player.current_bet > 0 && <span className="text-gold"> • {t('bet')}: ${player.current_bet}</span>}
               </div>
 
               {player.role && (
@@ -93,7 +95,7 @@ export default function HoldemTable({ gameState, emit, user, room }) {
                 padding: '0.75rem', borderRadius: 'var(--radius-sm)', margin: '0.5rem auto',
                 maxWidth: '350px', background: 'var(--accent-green-dim)', color: 'var(--accent-green)', fontWeight: 700
               }}>
-                🏆 {w.username} wins ${w.amount} {w.hand_name ? `with ${w.hand_name}` : ''}
+                🏆 {w.username === 'House Dealer' ? t('houseDealer') : w.username} {t('wins')} ${w.amount} {w.hand_name ? `${t('withHand')} ${w.hand_name}` : ''}
               </div>
             ))}
           </div>
@@ -104,37 +106,37 @@ export default function HoldemTable({ gameState, emit, user, room }) {
       <div className="card" style={{ marginTop: '1rem' }}>
         {phase === 'waiting' && (
           <div className="flex items-center gap-2">
-            <button className="btn btn-primary btn-lg" onClick={startGame}>🃏 Start Hand</button>
+            <button className="btn btn-primary btn-lg" onClick={startGame}>🃏 {t('startHand')}</button>
             <span className="text-muted" style={{ fontSize: '0.85rem' }}>
-              {Object.keys(state.players || {}).length} player(s) at table
+              {Object.keys(state.players || {}).length} {t('playersAtTable')}
             </span>
           </div>
         )}
 
         {(['preflop', 'flop', 'turn', 'river'].includes(phase)) && isMyTurn && (
           <div className="flex gap-1 items-center" style={{ flexWrap: 'wrap' }}>
-            <button className="btn btn-danger" onClick={fold}>🚫 Fold</button>
-            <button className="btn btn-outline" onClick={check}>✓ Check</button>
+            <button className="btn btn-danger" onClick={fold}>🚫 {t('fold')}</button>
+            <button className="btn btn-outline" onClick={check}>✓ {t('check')}</button>
             <button className="btn btn-green" onClick={call}>
-              📞 Call {state.current_bet > (myPlayer?.current_bet || 0)
+              📞 {t('call')} {state.current_bet > (myPlayer?.current_bet || 0)
                 ? `$${state.current_bet - (myPlayer?.current_bet || 0)}` : ''}
             </button>
             <div className="flex gap-1 items-center">
               <input className="input" type="number" value={raiseAmount}
                 onChange={e => setRaiseAmount(+e.target.value)}
                 style={{ width: '90px' }} min={state.min_raise || 10} />
-              <button className="btn btn-gold" onClick={raise}>💰 Raise</button>
+              <button className="btn btn-gold" onClick={raise}>💰 {t('raise')}</button>
             </div>
-            <button className="btn btn-primary" onClick={allIn}>🔥 All In</button>
+            <button className="btn btn-primary" onClick={allIn}>🔥 {t('allIn')}</button>
           </div>
         )}
 
         {(['preflop', 'flop', 'turn', 'river'].includes(phase)) && !isMyTurn && (
-          <p className="text-muted">⏳ Waiting for {state.players?.[state.current_player]?.username || 'opponent'}...</p>
+          <p className="text-muted">⏳ {t('waitingFor')} {state.players?.[state.current_player]?.username === 'House Dealer' ? t('houseDealer') : state.players?.[state.current_player]?.username || 'opponent'}...</p>
         )}
 
         {phase === 'showdown' && (
-          <button className="btn btn-primary" onClick={startGame}>🔄 Next Hand</button>
+          <button className="btn btn-primary" onClick={startGame}>🔄 {t('nextHand')}</button>
         )}
       </div>
     </div>

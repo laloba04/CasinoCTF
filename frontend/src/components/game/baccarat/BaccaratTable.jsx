@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import PlayingCard from '../shared/Card';
+import { useI18n } from '../../../hooks/useI18n';
 
 export default function BaccaratTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(50);
   const [betSide, setBetSide] = useState(null);
+  const { t } = useI18n();
   const state = gameState || {};
   const phase = state.phase || 'betting';
   const rid = room?.id;
@@ -16,9 +18,9 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
   const deal = () => emit('baccarat_deal', { room_id: rid });
 
   const SIDES = [
-    { key: 'player', label: '👤 Player', payout: '1:1', color: 'var(--accent-blue)' },
-    { key: 'banker', label: '🏦 Banker', payout: '0.95:1', color: 'var(--accent-red)' },
-    { key: 'tie', label: '🤝 Tie', payout: '8:1', color: 'var(--accent-green)' },
+    { key: 'player', label: `👤 ${t('playerBet')}`, payout: '1:1', color: 'var(--accent-blue)' },
+    { key: 'banker', label: `🏦 ${t('bankerBet')}`, payout: '0.95:1', color: 'var(--accent-red)' },
+    { key: 'tie', label: `🤝 ${t('tieBet')}`, payout: '8:1', color: 'var(--accent-green)' },
   ];
 
   return (
@@ -28,7 +30,7 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
           {/* Player Hand */}
           <div className="text-center">
             <div style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', fontWeight: 700, marginBottom: '0.5rem', letterSpacing: '0.1em' }}>
-              PLAYER {state.player_score !== undefined ? `• ${state.player_score}` : ''}
+              {t('player')} {state.player_score !== undefined ? `• ${state.player_score}` : ''}
             </div>
             <div className="hand" style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', minHeight: '100px' }}>
               {(state.player_hand || []).map((card, i) => (
@@ -40,7 +42,7 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
           {/* Banker Hand */}
           <div className="text-center">
             <div style={{ fontSize: '0.8rem', color: 'var(--accent-red)', fontWeight: 700, marginBottom: '0.5rem', letterSpacing: '0.1em' }}>
-              BANKER {state.banker_score !== undefined ? `• ${state.banker_score}` : ''}
+              {t('banker')} {state.banker_score !== undefined ? `• ${state.banker_score}` : ''}
             </div>
             <div className="hand" style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', minHeight: '100px' }}>
               {(state.banker_hand || []).map((card, i) => (
@@ -58,14 +60,14 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
               background: 'var(--accent-gold-dim)', color: 'var(--accent-gold)',
               fontWeight: 800, fontSize: '1.2rem'
             }}>
-              🏆 {state.winner === 'player' ? 'Player' : state.winner === 'banker' ? 'Banker' : 'Tie'} Wins!
+              🏆 {state.winner === 'player' ? t('playerBet') : state.winner === 'banker' ? t('bankerBet') : t('tieBet')}!
             </div>
             {state.results && Object.entries(state.results).map(([uid, res]) => (
               <div key={uid} style={{
                 marginTop: '0.5rem', fontSize: '0.9rem', fontWeight: 600,
                 color: res.payout > 0 ? 'var(--accent-green)' : 'var(--accent-red)'
               }}>
-                {res.payout > 0 ? `You won $${res.payout}! 🎉` : `Lost $${res.amount || 0} 😔`}
+                {res.payout > 0 ? `+ $${res.payout}! 🎉` : `- $${res.amount || 0} 😔`}
               </div>
             ))}
           </div>
@@ -83,7 +85,7 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
                   onClick={() => setBetSide(side.key)}
                   style={{ minWidth: '140px', flexDirection: 'column', padding: '1rem' }}>
                   <span style={{ fontSize: '1.2rem' }}>{side.label}</span>
-                  <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>Pays {side.payout}</span>
+                  <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>{t('pays')} {side.payout}</span>
                 </button>
               ))}
             </div>
@@ -98,7 +100,7 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
                 ))}
               </div>
               <button className="btn btn-gold" onClick={placeBet} disabled={!betSide}>
-                Place Bet ${betAmount}
+                {t('placeBet')} ${betAmount}
               </button>
             </div>
           </div>
@@ -106,15 +108,17 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
 
         {state.bets_placed && !state.winner && (
           <div className="flex items-center justify-between">
-            <span className="text-muted">Bet placed on {betSide?.toUpperCase()}</span>
-            <button className="btn btn-primary btn-lg" onClick={deal}>🂡 Deal Cards</button>
+            <span className="text-muted">{t('betPlacedOn')} {betSide && t(betSide + 'Bet')}</span>
+            <button className="btn btn-primary btn-lg" onClick={deal}>🂡 {t('dealCards')}</button>
           </div>
         )}
 
         {state.winner && (
-          <button className="btn btn-primary" onClick={() => emit('baccarat_join', { room_id: rid })}>
-            🔄 New Round
-          </button>
+          <div className="text-center mt-2">
+            <button className="btn btn-primary" onClick={() => emit('baccarat_join', { room_id: rid })}>
+              🔄 {t('newRound')}
+            </button>
+          </div>
         )}
       </div>
     </div>

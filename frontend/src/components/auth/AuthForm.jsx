@@ -23,7 +23,7 @@ export default function AuthForm() {
         await register(username, password, displayName || username);
       }
     } catch (err) {
-      setError(err.error || 'Something went wrong');
+      setError(err.error || t('somethingWentWrong') || 'Something went wrong');
     } finally {
       setLoading(false);
     }

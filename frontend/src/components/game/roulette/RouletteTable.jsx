@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useI18n } from '../../../hooks/useI18n';
 
 const RED = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
 
 export default function RouletteTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(25);
   const [myBets, setMyBets] = useState([]);
+  const { t } = useI18n();
   const state = gameState || {};
   const rid = room?.id;
 
@@ -66,16 +68,16 @@ export default function RouletteTable({ gameState, emit, user, room }) {
             {/* Outside bets */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '4px' }}>
               <div className="bet-cell" onClick={() => placeBet('red', null)}
-                style={{ background: 'var(--accent-red-dim)', color: 'var(--accent-red)' }}>🔴 Red</div>
+                style={{ background: 'var(--accent-red-dim)', color: 'var(--accent-red)' }}>🔴 {t('red')}</div>
               <div className="bet-cell" onClick={() => placeBet('black', null)}
-                style={{ background: 'rgba(30,41,59,0.8)' }}>⚫ Black</div>
-              <div className="bet-cell" onClick={() => placeBet('even', null)}>Even</div>
-              <div className="bet-cell" onClick={() => placeBet('odd', null)}>Odd</div>
-              <div className="bet-cell" onClick={() => placeBet('low', null)}>1-18</div>
-              <div className="bet-cell" onClick={() => placeBet('high', null)}>19-36</div>
-              <div className="bet-cell" onClick={() => placeBet('dozen', 1)} style={{ gridColumn: 'span 2' }}>1st 12</div>
-              <div className="bet-cell" onClick={() => placeBet('dozen', 2)} style={{ gridColumn: 'span 2' }}>2nd 12</div>
-              <div className="bet-cell" onClick={() => placeBet('dozen', 3)} style={{ gridColumn: 'span 2' }}>3rd 12</div>
+                style={{ background: 'rgba(30,41,59,0.8)' }}>⚫ {t('black')}</div>
+              <div className="bet-cell" onClick={() => placeBet('even', null)}>{t('even')}</div>
+              <div className="bet-cell" onClick={() => placeBet('odd', null)}>{t('odd')}</div>
+              <div className="bet-cell" onClick={() => placeBet('low', null)}>{t('low')}</div>
+              <div className="bet-cell" onClick={() => placeBet('high', null)}>{t('high')}</div>
+              <div className="bet-cell" onClick={() => placeBet('dozen', 1)} style={{ gridColumn: 'span 2' }}>{t('first12')}</div>
+              <div className="bet-cell" onClick={() => placeBet('dozen', 2)} style={{ gridColumn: 'span 2' }}>{t('second12')}</div>
+              <div className="bet-cell" onClick={() => placeBet('dozen', 3)} style={{ gridColumn: 'span 2' }}>{t('third12')}</div>
             </div>
           </div>
         </div>
@@ -90,7 +92,7 @@ export default function RouletteTable({ gameState, emit, user, room }) {
                 color: res.total_win > 0 ? 'var(--accent-green)' : 'var(--accent-red)',
                 fontWeight: 700, maxWidth: '300px', margin: '0.5rem auto'
               }}>
-                {res.total_win > 0 ? `🎉 Won $${res.total_win}!` : `Lost $${res.total_bet}`}
+                {res.total_win > 0 ? `🎉 ${t('won')} $${res.total_win}!` : `${t('lost')} $${res.total_bet}`}
               </div>
             ))}
           </div>
@@ -101,10 +103,10 @@ export default function RouletteTable({ gameState, emit, user, room }) {
       <div className="card" style={{ marginTop: '1rem' }}>
         <div className="flex items-center justify-between">
           <div className="text-muted" style={{ fontSize: '0.85rem' }}>
-            {myBets.length} bet(s) placed • Total: ${myBets.reduce((s, b) => s + b.amount, 0)}
+            {myBets.length} {t('betsPlaced')} • {t('total')}: ${myBets.reduce((s, b) => s + b.amount, 0)}
           </div>
           <button className="btn btn-gold btn-lg" onClick={spinWheel} disabled={myBets.length === 0}>
-            🎡 Spin the Wheel!
+            🎡 {t('spinWheel')}
           </button>
         </div>
       </div>

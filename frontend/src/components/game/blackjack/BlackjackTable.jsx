@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import PlayingCard from '../shared/Card';
+import { useI18n } from '../../../hooks/useI18n';
 
 export default function BlackjackTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(50);
+  const { t } = useI18n();
   const state = gameState || {};
   const phase = state.phase || 'betting';
   const myId = String(user?.id);
@@ -23,7 +25,7 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
         {/* Dealer */}
         <div className="text-center mb-2">
           <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-            DEALER {state.dealer?.score !== '?' ? `• ${state.dealer?.score}` : ''}
+            {t('dealer')} {state.dealer?.score !== '?' ? `• ${state.dealer?.score}` : ''}
           </div>
           <div className="hand justify-center" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
             {(state.dealer?.hand || []).map((card, i) => (
@@ -46,7 +48,7 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
                 background: uid === myId ? 'var(--accent-gold-dim)' : 'transparent',
                 border: state.current_player === uid ? '1px solid var(--accent-green)' : '1px solid transparent'
               }}>
-                {player.username} {uid === myId ? '(You)' : ''}
+                {player.username} {uid === myId ? `(${t('you')})` : ''}
                 {state.current_player === uid && ' ◄'}
               </div>
               {player.hands?.map((hand, hi) => (
@@ -55,7 +57,7 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
                     {hand.map((card, ci) => <PlayingCard key={ci} card={card} />)}
                   </div>
                   <div style={{ fontSize: '0.75rem', marginTop: '0.3rem', color: 'var(--text-muted)' }}>
-                    Score: {player.scores?.[hi]} • Bet: ${player.bets?.[hi]}
+                    {t('score')}: {player.scores?.[hi]} • {t('bet')}: ${player.bets?.[hi]}
                     {player.status?.[hi] && (
                       <span style={{
                         marginLeft: '0.5rem', fontWeight: 700,
@@ -84,10 +86,10 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
                 color: res.total_payout > res.total_bet ? 'var(--accent-green)' : 'var(--accent-red)',
                 fontWeight: 700
               }}>
-                {uid === myId ? 'You' : state.players[uid]?.username}:
+                {uid === myId ? t('you') : state.players[uid]?.username}:
                 {res.total_payout > res.total_bet
-                  ? ` Won $${(res.total_payout - res.total_bet).toFixed(0)}! 🎉`
-                  : res.total_payout === res.total_bet ? ' Push 🤝' : ` Lost $${res.total_bet.toFixed(0)} 😔`}
+                  ? ` ${t('won')} $${(res.total_payout - res.total_bet).toFixed(0)}! 🎉`
+                  : res.total_payout === res.total_bet ? ` ${t('push')} 🤝` : ` ${t('lost')} $${res.total_bet.toFixed(0)} 😔`}
               </div>
             ))}
           </div>
@@ -109,37 +111,37 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
             </div>
             <input className="input" type="number" value={betAmount} onChange={e => setBetAmount(+e.target.value)}
               style={{ width: '100px' }} />
-            <button className="btn btn-gold" onClick={placeBet}>Place Bet</button>
+            <button className="btn btn-gold" onClick={placeBet}>{t('placeBet')}</button>
           </div>
         )}
 
         {phase === 'playing' && isMyTurn && myPlayer && (
           <div className="flex gap-1" style={{ flexWrap: 'wrap' }}>
-            <button className="btn btn-green" onClick={hit}>🃏 Hit</button>
-            <button className="btn btn-primary" onClick={stand}>✋ Stand</button>
+            <button className="btn btn-green" onClick={hit}>🃏 {t('hit')}</button>
+            <button className="btn btn-primary" onClick={stand}>✋ {t('stand')}</button>
             <button className="btn btn-gold" onClick={doubleDown}
               disabled={myPlayer.hands?.[myPlayer.active_hand]?.length !== 2}>
-              💰 Double
+              💰 {t('double')}
             </button>
             <button className="btn btn-outline" onClick={split}
               disabled={!myPlayer.hands?.[myPlayer.active_hand] ||
                 myPlayer.hands[myPlayer.active_hand].length !== 2 ||
                 myPlayer.hands[myPlayer.active_hand][0]?.rank !== myPlayer.hands[myPlayer.active_hand][1]?.rank}>
-              ✂️ Split
+              ✂️ {t('split')}
             </button>
           </div>
         )}
 
         {phase === 'playing' && !isMyTurn && (
-          <p className="text-muted">⏳ Waiting for {state.players?.[state.current_player]?.username}'s turn...</p>
+          <p className="text-muted">⏳ {t('waitingFor')} {state.players?.[state.current_player]?.username}{t('turn')}</p>
         )}
 
         {phase === 'payout' && (
-          <button className="btn btn-primary" onClick={newRound}>🔄 New Round</button>
+          <button className="btn btn-primary" onClick={newRound}>🔄 {t('newRound')}</button>
         )}
 
         {phase === 'dealer_turn' && (
-          <p className="text-gold" style={{ fontWeight: 600 }}>🎰 Dealer is playing...</p>
+          <p className="text-muted">⏳ {t('dealerPlaying')}</p>
         )}
       </div>
     </div>

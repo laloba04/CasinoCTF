@@ -41,6 +41,10 @@ class HoldemGame:
 
     def start_hand(self):
         active = [uid for uid in self.seat_order if uid in self.players]
+        # Auto-add house bot for solo play
+        if len(active) == 1:
+            self._add_bot()
+            active = [uid for uid in self.seat_order if uid in self.players]
         if len(active) < 2:
             return {'error': 'Need at least 2 players'}
         self.seat_order = active
@@ -70,6 +74,7 @@ class HoldemGame:
         self.current_idx = (bb_idx + 1) % n
         self.last_raiser = self.seat_order[bb_idx]
         self._skip_inactive()
+        self._check_bot_turn()
         return self.get_state()
 
     def _force_bet(self, uid, amount):
@@ -81,6 +86,16 @@ class HoldemGame:
         self.pot += actual
         if p['chips'] == 0:
             p['all_in'] = True
+
+    def _add_bot(self):
+        bot_id = "BOT_HOUSE"
+        if bot_id not in self.players:
+            self.players[bot_id] = {
+                'username': 'House Dealer', 'chips': 100000, 'hole_cards': [],
+                'current_bet': 0, 'total_bet': 0, 'folded': False, 'all_in': False
+            }
+            if bot_id not in self.seat_order:
+                self.seat_order.append(bot_id)
 
     def action(self, uid, action_type, amount=0):
         if self.phase in ['waiting', 'showdown']:
@@ -123,7 +138,28 @@ class HoldemGame:
         if self._round_complete():
             self._next_phase()
 
+        self._check_bot_turn()
         return self.get_state()
+
+    def _check_bot_turn(self):
+        if self.phase in ['waiting', 'showdown']:
+            return
+        current_uid = self.seat_order[self.current_idx]
+        if current_uid == "BOT_HOUSE":
+            p = self.players["BOT_HOUSE"]
+            diff = self.current_bet - p['current_bet']
+            import random
+            if diff > 0:
+                # House will call or fold
+                if random.random() < 0.1:
+                    self.action("BOT_HOUSE", "fold")
+                else:
+                    self.action("BOT_HOUSE", "call")
+            else:
+                if random.random() < 0.15:
+                    self.action("BOT_HOUSE", "raise", self.current_bet + self.big_blind * 2)
+                else:
+                    self.action("BOT_HOUSE", "check")
 
     def _skip_inactive(self):
         n = len(self.seat_order)

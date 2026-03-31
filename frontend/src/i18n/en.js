@@ -38,6 +38,12 @@ export default {
   haveAccount: 'Already have an account?',
   register: 'Register',
   loading: 'Loading...',
+  somethingWentWrong: 'Something went wrong',
+
+  // Results
+  win: 'Win',
+  loss: 'Loss',
+  bust: 'Bust',
 
   // Lobby
   gameLobby: 'Game Lobby',
@@ -55,6 +61,10 @@ export default {
   noTables: 'No tables yet. Be the first to create one!',
   open: 'Open',
   playing: 'Playing',
+  roomNotFound: 'Room not found',
+  comingSoon: 'coming soon!',
+  table: 'table',
+  roomTitle: 'Room',
 
   // Games
   dealer: 'DEALER',
@@ -100,6 +110,9 @@ export default {
   waitingForPlayers: 'Waiting for players to start...',
   wins: 'wins',
   withHand: 'with',
+  stack: 'Stack',
+  pot: 'Pot',
+  houseDealer: 'House Dealer',
 
   // Baccarat
   player: 'PLAYER',
@@ -147,6 +160,17 @@ export default {
   getHint: 'Get Hint',
   noMoreHints: 'No more hints',
   hint: 'Hint',
+
+  // Roulette
+  red: 'Red',
+  black: 'Black',
+  even: 'Even',
+  odd: 'Odd',
+  low: '1-18',
+  high: '19-36',
+  first12: '1st 12',
+  second12: '2nd 12',
+  third12: '3rd 12',
 
   // Profile
   profileTitle: 'Profile',

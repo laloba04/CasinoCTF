@@ -26,7 +26,11 @@ export function SocketProvider({ children }) {
     socket.on('chat_message', (msg) => setChatMessages(prev => [...prev.slice(-99), msg]));
     socket.on('room_joined', (data) => setRoomPlayers(data.players || {}));
     socket.on('player_left', () => {});
-    socket.on('error', (err) => console.error('Socket error:', err));
+    socket.on('error', (err) => {
+      const msg = err?.message || err?.error || '';
+      const ignore = ['No active game', 'Join a room first', 'Not in game', 'Not your turn', 'Not in this game'];
+      if (!ignore.some(i => msg.includes(i))) console.warn('Socket:', err);
+    });
     socket.on('slots_result', (result) => setGameState(result));
     socket.on('roulette_result', (result) => setGameState(prev => ({ ...prev, ...result })));
 

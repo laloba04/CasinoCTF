@@ -1,20 +1,21 @@
 import { useState } from 'react';
 import PlayingCard from '../shared/Card';
 
-export default function BlackjackTable({ gameState, emit, user }) {
+export default function BlackjackTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(50);
   const state = gameState || {};
   const phase = state.phase || 'betting';
   const myId = String(user?.id);
   const myPlayer = state.players?.[myId];
   const isMyTurn = state.current_player === myId;
+  const rid = room?.id;
 
-  const placeBet = () => emit('bj_bet', { amount: betAmount });
-  const hit = () => emit('bj_hit', {});
-  const stand = () => emit('bj_stand', {});
-  const doubleDown = () => emit('bj_double', {});
-  const split = () => emit('bj_split', {});
-  const newRound = () => emit('bj_reset', {});
+  const placeBet = () => emit('bj_bet', { amount: betAmount, room_id: rid });
+  const hit = () => emit('bj_hit', { room_id: rid });
+  const stand = () => emit('bj_stand', { room_id: rid });
+  const doubleDown = () => emit('bj_double', { room_id: rid });
+  const split = () => emit('bj_split', { room_id: rid });
+  const newRound = () => emit('bj_reset', { room_id: rid });
 
   return (
     <div>

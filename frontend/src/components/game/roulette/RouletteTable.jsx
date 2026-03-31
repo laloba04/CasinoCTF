@@ -2,18 +2,19 @@ import { useState } from 'react';
 
 const RED = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
 
-export default function RouletteTable({ gameState, emit, user }) {
+export default function RouletteTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(25);
   const [myBets, setMyBets] = useState([]);
   const state = gameState || {};
+  const rid = room?.id;
 
   const placeBet = (type, value) => {
-    emit('roulette_bet', { type, value, amount: betAmount });
+    emit('roulette_bet', { type, value, amount: betAmount, room_id: rid });
     setMyBets(prev => [...prev, { type, value, amount: betAmount }]);
   };
 
   const spinWheel = () => {
-    emit('roulette_spin', {});
+    emit('roulette_spin', { room_id: rid });
     setMyBets([]);
   };
 

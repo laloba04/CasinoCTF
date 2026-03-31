@@ -46,18 +46,16 @@ export default function HoldemTable({ gameState, emit, user, room }) {
         {/* Players */}
         <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           {Object.entries(state.players || {}).map(([uid, player]) => (
-            <div key={uid} style={{
-              textAlign: 'center', padding: '0.75rem', borderRadius: 'var(--radius-md)',
-              background: uid === myId ? 'rgba(168,85,247,0.1)' : 'rgba(255,255,255,0.03)',
-              border: state.current_player === uid ? '1px solid var(--accent-green)' : '1px solid transparent',
-              opacity: player.folded ? 0.4 : 1, minWidth: '120px'
+            <div key={uid} className={state.current_player === uid ? 'active-turn' : ''} style={{
+              padding: '1rem',
+              background: 'rgba(0,0,0,0.5)', borderRadius: 'var(--radius-lg)',
+              border: '1px solid ' + (player.folded ? 'var(--border)' : 'var(--accent-purple)'),
+              opacity: player.folded ? 0.5 : 1,
+              minWidth: '160px', textAlign: 'center',
+              transition: 'all 0.3s'
             }}>
-              <div style={{
-                fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.4rem',
-                color: uid === myId ? 'var(--accent-gold)' : 'var(--text-secondary)'
-              }}>
-                {player.username === 'House Dealer' ? t('houseDealer') : player.username} {uid === myId ? `(${t('you')})` : ''}
-                {state.current_player === uid && ' ◄'}
+              <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: player.username === 'House Dealer' ? 'var(--accent-gold)' : (uid === myId ? 'var(--accent-purple)' : 'white') }}>
+                {player.username === 'House Dealer' ? t('houseDealer') : (player.display_name || player.username)} {uid === myId ? `(${t('you')})` : ''}
                 {player.folded && ' 🚫'}
               </div>
 

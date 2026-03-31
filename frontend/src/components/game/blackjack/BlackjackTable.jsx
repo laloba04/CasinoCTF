@@ -39,17 +39,16 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
         {/* Players */}
         <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
           {Object.entries(state.players || {}).map(([uid, player]) => (
-            <div key={uid} className={`text-center ${uid === myId ? '' : ''}`}
-              style={{ opacity: player.status?.[0] === 'bust' ? 0.5 : 1 }}>
+            <div key={uid} className={`text-center ${state.current_player === uid ? 'active-turn' : ''}`}
+              style={{ opacity: player.status?.[0] === 'bust' ? 0.5 : 1, padding: '0.5rem', borderRadius: '10px' }}>
               <div style={{
-                fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem',
+                fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.5rem',
                 color: uid === myId ? 'var(--accent-gold)' : 'var(--text-secondary)',
-                padding: '0.2rem 0.8rem', borderRadius: '20px',
+                padding: '0.3rem 1rem', borderRadius: '20px',
                 background: uid === myId ? 'var(--accent-gold-dim)' : 'transparent',
-                border: state.current_player === uid ? '1px solid var(--accent-green)' : '1px solid transparent'
+                display: 'inline-block'
               }}>
                 {player.username} {uid === myId ? `(${t('you')})` : ''}
-                {state.current_player === uid && ' ◄'}
               </div>
               {player.hands?.map((hand, hi) => (
                 <div key={hi} style={{ marginBottom: '0.5rem' }}>

@@ -3,6 +3,7 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'casino-ctf-super-secret-key-change-in-prod')
+    DATABASE_URL = os.environ.get('DATABASE_URL')
     DATABASE_PATH = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),
         os.environ.get('DATABASE_PATH', 'casino.db')

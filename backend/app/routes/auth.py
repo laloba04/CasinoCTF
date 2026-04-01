@@ -22,10 +22,11 @@ def register():
     try:
         cursor = db.cursor()
         cursor.execute(
-            "INSERT INTO users (username, password, display_name) VALUES (?, ?, ?)",
+            "INSERT INTO users (username, password, display_name) VALUES (?, ?, ?) RETURNING id",
             (username, password, display_name)
         )
-        user_id = cursor.lastrowid
+        row = cursor.fetchone()
+        user_id = row['id'] if isinstance(row, dict) else row[0]
         cursor.execute(
             "INSERT INTO scoreboard (user_id, display_name) VALUES (?, ?)",
             (user_id, display_name)

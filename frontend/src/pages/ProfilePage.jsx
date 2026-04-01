@@ -3,6 +3,18 @@ import { api } from '../utils/api';
 import { useAuth } from '../hooks/useAuth';
 import { useI18n } from '../hooks/useI18n';
 
+const GAME_ICONS = {
+  blackjack: '🃏', holdem: '♠️', roulette: '🎡',
+  slots: '🎰', baccarat: '🂡', craps: '🎲'
+};
+
+const RESULT_STYLE = {
+  win:       { bg: 'var(--accent-green-dim)', color: 'var(--accent-green)' },
+  blackjack: { bg: 'var(--accent-green-dim)', color: 'var(--accent-green)' },
+  push:      { bg: 'var(--accent-gold-dim)',  color: 'var(--accent-gold)'  },
+  lose:      { bg: 'var(--accent-red-dim)',   color: 'var(--accent-red)'   },
+};
+
 export default function ProfilePage() {
   const { user, refreshBalance } = useAuth();
   const { t } = useI18n();
@@ -23,11 +35,6 @@ export default function ProfilePage() {
   const totalProfit = stats.reduce((s, st) => s + ((st.total_payout || 0) - (st.total_bet || 0)), 0);
   const winRate = totalGames > 0
     ? Math.round(stats.reduce((s, st) => s + (st.wins || 0), 0) / totalGames * 100) : 0;
-
-  const GAME_ICONS = {
-    blackjack: '🃏', holdem: '♠️', roulette: '🎡',
-    slots: '🎰', baccarat: '🂡', craps: '🎲'
-  };
 
   return (
     <div className="container" style={{ paddingTop: '1rem', paddingBottom: '2rem' }}>
@@ -57,92 +64,79 @@ export default function ProfilePage() {
       </div>
 
       {/* Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div className="card text-center fade-in">
-          <div style={{ fontSize: '2rem', marginBottom: '0.3rem' }}>🎮</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'Outfit' }}>{totalGames}</div>
-          <div className="text-muted" style={{ fontSize: '0.8rem' }}>{t('gamesPlayed')}</div>
-        </div>
-        <div className="card text-center fade-in stagger-1">
-          <div style={{ fontSize: '2rem', marginBottom: '0.3rem' }}>{totalProfit >= 0 ? '📈' : '📉'}</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'Outfit', color: totalProfit >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
-            {totalProfit >= 0 ? '+' : ''}${totalProfit.toFixed(0)}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+        {[
+          { icon: '🎮', value: totalGames, label: t('gamesPlayed'), color: null },
+          { icon: totalProfit >= 0 ? '📈' : '📉', value: `${totalProfit >= 0 ? '+' : ''}$${totalProfit.toFixed(0)}`, label: t('netProfit'), color: totalProfit >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' },
+          { icon: '🏆', value: `${winRate}%`, label: t('winRate'), color: null },
+          { icon: '🔓', value: `${ctfSolved}/9`, label: t('ctfFlags'), color: 'var(--accent-purple)' },
+        ].map((s, i) => (
+          <div key={i} className={`card text-center fade-in stagger-${i}`} style={{ padding: '1.25rem' }}>
+            <div style={{ fontSize: '1.8rem', marginBottom: '0.3rem' }}>{s.icon}</div>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, fontFamily: 'Outfit', color: s.color || 'var(--text-primary)' }}>{s.value}</div>
+            <div className="text-muted" style={{ fontSize: '0.78rem' }}>{s.label}</div>
           </div>
-          <div className="text-muted" style={{ fontSize: '0.8rem' }}>{t('netProfit')}</div>
-        </div>
-        <div className="card text-center fade-in stagger-2">
-          <div style={{ fontSize: '2rem', marginBottom: '0.3rem' }}>🏆</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'Outfit' }}>{winRate}%</div>
-          <div className="text-muted" style={{ fontSize: '0.8rem' }}>{t('winRate')}</div>
-        </div>
-        <div className="card text-center fade-in stagger-3">
-          <div style={{ fontSize: '2rem', marginBottom: '0.3rem' }}>🔓</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'Outfit', color: 'var(--accent-purple)' }}>{ctfSolved}/9</div>
-          <div className="text-muted" style={{ fontSize: '0.8rem' }}>{t('ctfFlags')}</div>
-        </div>
+        ))}
       </div>
 
       {/* Per-Game Stats */}
       {stats.length > 0 && (
-        <div className="card" style={{ marginBottom: '1.5rem' }}>
-          <div className="card-header">📊 {t('statsByGame')}</div>
-          <div className="table-wrap"><table className="scoreboard-table">
-            <thead>
-              <tr><th>{t('game')}</th><th>{t('played')}</th><th>{t('totalBetCol')}</th><th>{t('totalWon')}</th><th>{t('net')}</th></tr>
-            </thead>
-            <tbody>
-              {stats.map(s => {
-                const net = (s.total_payout || 0) - (s.total_bet || 0);
-                return (
-                  <tr key={s.game_type}>
-                    <td>
-                      <span style={{ marginRight: '0.5rem' }}>{GAME_ICONS[s.game_type] || '🎲'}</span>
-                      {t(s.game_type)}
-                    </td>
-                    <td>{s.played}</td>
-                    <td>${(s.total_bet || 0).toLocaleString()}</td>
-                    <td className="text-green">${(s.total_payout || 0).toLocaleString()}</td>
-                    <td className={net >= 0 ? 'text-green' : 'text-red'} style={{ fontWeight: 700 }}>
-                      {net >= 0 ? '+' : ''}${net.toFixed(0)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table></div>
+        <div className="card" style={{ marginBottom: '1.5rem', padding: 0, overflow: 'hidden' }}>
+          <div className="card-header" style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--border)' }}>📊 {t('statsByGame')}</div>
+          {stats.map(s => {
+            const net = (s.total_payout || 0) - (s.total_bet || 0);
+            return (
+              <div key={s.game_type} className="history-row">
+                <div className="history-game">
+                  <span style={{ fontSize: '1.4rem' }}>{GAME_ICONS[s.game_type] || '🎲'}</span>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{t(s.game_type)}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{s.played} {t('gamesPlayed').toLowerCase()}</div>
+                  </div>
+                </div>
+                <div className="history-meta">
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>${(s.total_bet || 0).toLocaleString()}</span>
+                  <span className="text-green" style={{ fontSize: '0.85rem' }}>${(s.total_payout || 0).toLocaleString()}</span>
+                  <span style={{ fontWeight: 700, color: net >= 0 ? 'var(--accent-green)' : 'var(--accent-red)', fontSize: '0.9rem' }}>
+                    {net >= 0 ? '+' : ''}${net.toFixed(0)}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 
       {/* Recent Games */}
-      <div className="card">
-        <div className="card-header">🕐 {t('recentGames')}</div>
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="card-header" style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--border)' }}>🕐 {t('recentGames')}</div>
         {recentGames.length === 0 ? (
-          <p className="text-muted" style={{ textAlign: 'center', padding: '1.5rem' }}>{t('noGamesYet')}</p>
-        ) : (
-          <div className="table-wrap"><table className="scoreboard-table">
-            <thead><tr><th>{t('game')}</th><th>{t('bet')}</th><th>{t('result')}</th><th>{t('payout')}</th><th>{t('date')}</th></tr></thead>
-            <tbody>
-              {recentGames.map(g => (
-                <tr key={g.id}>
-                  <td>
-                    <span style={{ marginRight: '0.5rem' }}>{GAME_ICONS[g.game_type] || '🎲'}</span>
-                    {t(g.game_type)}
-                  </td>
-                  <td>${g.bet}</td>
-                  <td>
-                    <span style={{
-                      padding: '0.15rem 0.5rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700,
-                      background: g.result === 'win' || g.result === 'blackjack' ? 'var(--accent-green-dim)' : g.result === 'push' ? 'var(--accent-gold-dim)' : 'var(--accent-red-dim)',
-                      color: g.result === 'win' || g.result === 'blackjack' ? 'var(--accent-green)' : g.result === 'push' ? 'var(--accent-gold)' : 'var(--accent-red)'
-                    }}>{t(g.result) ? t(g.result).toUpperCase() : g.result?.toUpperCase()}</span>
-                  </td>
-                  <td className={g.payout > 0 ? 'text-green' : ''}>${g.payout}</td>
-                  <td className="text-muted">{new Date(g.created_at).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table></div>
-        )}
+          <p className="text-muted" style={{ textAlign: 'center', padding: '2rem' }}>{t('noGamesYet')}</p>
+        ) : recentGames.map(g => {
+          const rs = RESULT_STYLE[g.result] || RESULT_STYLE.lose;
+          const label = t(g.result) ? t(g.result).toUpperCase() : g.result?.toUpperCase();
+          return (
+            <div key={g.id} className="history-row">
+              <div className="history-game">
+                <span style={{ fontSize: '1.4rem' }}>{GAME_ICONS[g.game_type] || '🎲'}</span>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{t(g.game_type)}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(g.created_at).toLocaleDateString()}</div>
+                </div>
+              </div>
+              <div className="history-meta">
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>${g.bet}</span>
+                <span style={{
+                  padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 700,
+                  background: rs.bg, color: rs.color
+                }}>{label}</span>
+                <span style={{ fontWeight: 700, color: g.payout > 0 ? 'var(--accent-green)' : 'var(--text-muted)', fontSize: '0.9rem' }}>
+                  {g.payout > 0 ? '+' : ''}${g.payout}
+                </span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

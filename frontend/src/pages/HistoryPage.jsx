@@ -47,7 +47,7 @@ export default function HistoryPage() {
         {games.length === 0 ? (
           <p className="text-muted text-center" style={{ padding: '2rem' }}>{t('noGamesYet')}</p>
         ) : (
-          <table className="scoreboard-table">
+          <div className="table-wrap"><table className="scoreboard-table">
             <thead><tr><th>{t('game')}</th><th>{t('bet')}</th><th>{t('result')}</th><th>{t('payout')}</th><th>{t('date')}</th></tr></thead>
             <tbody>
               {games.map(g => (
@@ -69,7 +69,7 @@ export default function HistoryPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
     </div>

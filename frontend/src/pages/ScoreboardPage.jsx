@@ -23,7 +23,7 @@ export default function ScoreboardPage() {
         {players.length === 0 ? (
           <p className="text-muted text-center" style={{ padding: '2rem' }}>{t('noPlayers')}</p>
         ) : (
-          <table className="scoreboard-table">
+          <div className="table-wrap"><table className="scoreboard-table">
             <thead>
               <tr>
                 <th>#</th>
@@ -53,7 +53,7 @@ export default function ScoreboardPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
     </div>

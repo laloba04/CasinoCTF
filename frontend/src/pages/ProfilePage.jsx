@@ -86,7 +86,7 @@ export default function ProfilePage() {
       {stats.length > 0 && (
         <div className="card" style={{ marginBottom: '1.5rem' }}>
           <div className="card-header">📊 {t('statsByGame')}</div>
-          <table className="scoreboard-table">
+          <div className="table-wrap"><table className="scoreboard-table">
             <thead>
               <tr><th>{t('game')}</th><th>{t('played')}</th><th>{t('totalBetCol')}</th><th>{t('totalWon')}</th><th>{t('net')}</th></tr>
             </thead>
@@ -109,7 +109,7 @@ export default function ProfilePage() {
                 );
               })}
             </tbody>
-          </table>
+          </table></div>
         </div>
       )}
 
@@ -119,7 +119,7 @@ export default function ProfilePage() {
         {recentGames.length === 0 ? (
           <p className="text-muted" style={{ textAlign: 'center', padding: '1.5rem' }}>{t('noGamesYet')}</p>
         ) : (
-          <table className="scoreboard-table">
+          <div className="table-wrap"><table className="scoreboard-table">
             <thead><tr><th>{t('game')}</th><th>{t('bet')}</th><th>{t('result')}</th><th>{t('payout')}</th><th>{t('date')}</th></tr></thead>
             <tbody>
               {recentGames.map(g => (
@@ -141,7 +141,7 @@ export default function ProfilePage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
     </div>

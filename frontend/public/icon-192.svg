@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#0a0e17"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="192" height="192" rx="36" fill="url(#bg)"/>
+  <!-- Outer ring -->
+  <rect x="6" y="6" width="180" height="180" rx="30" fill="none" stroke="url(#accent)" stroke-width="3" opacity="0.6"/>
+  <!-- Casino chip circle -->
+  <circle cx="96" cy="96" r="68" fill="none" stroke="url(#accent)" stroke-width="4"/>
+  <circle cx="96" cy="96" r="56" fill="url(#accent)" opacity="0.15"/>
+  <!-- Chip notches -->
+  <rect x="84" y="25" width="24" height="10" rx="3" fill="url(#accent)"/>
+  <rect x="84" y="157" width="24" height="10" rx="3" fill="url(#accent)"/>
+  <rect x="25" y="84" width="10" height="24" rx="3" fill="url(#accent)"/>
+  <rect x="157" y="84" width="10" height="24" rx="3" fill="url(#accent)"/>
+  <!-- Diagonal notches -->
+  <rect x="44" y="37" width="24" height="10" rx="3" fill="url(#accent)" transform="rotate(45 56 42)"/>
+  <rect x="124" y="37" width="24" height="10" rx="3" fill="url(#accent)" transform="rotate(-45 136 42)"/>
+  <rect x="44" y="145" width="24" height="10" rx="3" fill="url(#accent)" transform="rotate(-45 56 150)"/>
+  <rect x="124" y="145" width="24" height="10" rx="3" fill="url(#accent)" transform="rotate(45 136 150)"/>
+  <!-- Center text -->
+  <text x="96" y="88" font-family="serif" font-size="42" font-weight="900" text-anchor="middle" fill="url(#accent)">CTF</text>
+  <text x="96" y="116" font-family="sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#f59e0b" letter-spacing="3">CASINO</text>
+</svg>

@@ -414,15 +414,36 @@ input, select { font-family: inherit; }
 .toast-success { border-color: rgba(16, 185, 129, 0.3); }
 .toast-error { border-color: rgba(239, 68, 68, 0.3); }
 
+/* ── Game Layout (game + chat) ── */
+.game-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  align-items: start;
+}
+.game-layout-full {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .navbar-links a span.hide-mobile { display: none; }
   .page-title { font-size: 1.4rem; }
   .lobby-grid, .ctf-grid { grid-template-columns: 1fr; }
-  .game-table { padding: 1rem; }
-  .playing-card { width: 55px; height: 80px; font-size: 1rem; }
+  .game-table { padding: 1rem; min-height: 300px; }
+  .playing-card { width: 50px; height: 72px; font-size: 0.9rem; }
+  .playing-card .card-suit { font-size: 1.2rem; }
   .slots-symbol { font-size: 2rem; width: 55px; height: 55px; }
-  .roulette-wheel { width: 200px; height: 200px; font-size: 2rem; }
+  .roulette-wheel { width: 180px; height: 180px; font-size: 1.8rem; }
+  .bet-board { grid-template-columns: repeat(2, 1fr); }
+  .hand { gap: 0.25rem; }
+  .chip { width: 42px; height: 42px; font-size: 0.65rem; }
+  .game-layout { grid-template-columns: 1fr; }
+  .chat-panel { height: 220px; }
+  .page-header { flex-direction: column; align-items: flex-start; }
+  .page-header .flex { flex-wrap: wrap; }
 }
 
 /* ── Scrollbar ── */

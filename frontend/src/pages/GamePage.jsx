@@ -72,7 +72,7 @@ export default function GamePage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: room.game_type !== 'slots' ? '1fr 300px' : '1fr', gap: '1.5rem' }}>
+      <div className={room.game_type !== 'slots' ? 'game-layout' : 'game-layout-full'}>
         <GameComponent gameState={gameState} emit={emit} user={user} room={room} refreshBalance={refreshBalance} />
         {room.game_type !== 'slots' && <ChatPanel />}
       </div>

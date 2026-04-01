@@ -1,7 +1,7 @@
 # 🎰 CasinoCTF
 
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-development-orange)
+![Status](https://img.shields.io/badge/status-live-brightgreen)
 ![Architecture](https://img.shields.io/badge/architecture-modular-blue)
 ![Stack](https://img.shields.io/badge/stack-fullstack-purple)
 ![Security](https://img.shields.io/badge/security-9%20CTF%20challenges-red)
@@ -320,7 +320,7 @@ casino-ctf/
 │   │   │   └── ctf.py               # Challenges, flags, hints, profile (IDOR)
 │   │   ├── models/
 │   │   │   ├── cards.py             # Shared card utilities (deck, suits, ranks)
-│   │   │   ├── database.py          # SQLite schema + raw queries
+│   │   │   ├── database.py          # PostgreSQL (Supabase) schema + raw queries
 │   │   │   ├── blackjack_engine.py  # Multiplayer Blackjack (1-7 players)
 │   │   │   ├── holdem_engine.py     # Texas Hold'em (2-9 players)
 │   │   │   ├── roulette_engine.py   # European Roulette
@@ -411,7 +411,7 @@ casino-ctf/
 - **Eventlet** — Async server for concurrent connections
 
 ### Database
-- **SQLite** — File-based database (intentionally raw SQL for CTF)
+- **PostgreSQL (Supabase)** — Cloud-hosted database with persistent storage
 
 ### Auth
 - **JWT (PyJWT)** — Stateless authentication tokens

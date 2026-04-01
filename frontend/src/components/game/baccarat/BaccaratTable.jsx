@@ -30,7 +30,7 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
           {/* Player Hand */}
           <div className="text-center">
             <div style={{ fontSize: '0.8rem', color: 'var(--accent-blue)', fontWeight: 700, marginBottom: '0.5rem', letterSpacing: '0.1em' }}>
-              {t('player')} {state.player_score !== undefined ? `• ${state.player_score}` : ''}
+              {t('player')} {state.player_total !== undefined ? `• ${state.player_total}` : ''}
             </div>
             <div className="hand" style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', minHeight: '100px' }}>
               {(state.player_hand || []).map((card, i) => (
@@ -42,7 +42,7 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
           {/* Banker Hand */}
           <div className="text-center">
             <div style={{ fontSize: '0.8rem', color: 'var(--accent-red)', fontWeight: 700, marginBottom: '0.5rem', letterSpacing: '0.1em' }}>
-              {t('banker')} {state.banker_score !== undefined ? `• ${state.banker_score}` : ''}
+              {t('banker')} {state.banker_total !== undefined ? `• ${state.banker_total}` : ''}
             </div>
             <div className="hand" style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', minHeight: '100px' }}>
               {(state.banker_hand || []).map((card, i) => (
@@ -53,23 +53,26 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
         </div>
 
         {/* Result */}
-        {state.winner && (
+        {state.result && (
           <div className="fade-in text-center" style={{ marginTop: '1.5rem' }}>
             <div style={{
               padding: '1rem', borderRadius: 'var(--radius-md)', maxWidth: '300px', margin: '0 auto',
               background: 'var(--accent-gold-dim)', color: 'var(--accent-gold)',
               fontWeight: 800, fontSize: '1.2rem'
             }}>
-              🏆 {state.winner === 'player' ? t('playerBet') : state.winner === 'banker' ? t('bankerBet') : t('tieBet')}!
+              🏆 {state.result === 'player' ? t('playerBet') : state.result === 'banker' ? t('bankerBet') : t('tieBet')}!
             </div>
-            {state.results && Object.entries(state.results).map(([uid, res]) => (
-              <div key={uid} style={{
-                marginTop: '0.5rem', fontSize: '0.9rem', fontWeight: 600,
-                color: res.payout > 0 ? 'var(--accent-green)' : 'var(--accent-red)'
-              }}>
-                {res.payout > 0 ? `+ $${res.payout}! 🎉` : `- $${res.amount || 0} 😔`}
-              </div>
-            ))}
+            {state.results && Object.entries(state.results).map(([uid, res]) => {
+              const betAmt = state.bets?.[uid]?.amount || 0;
+              return (
+                <div key={uid} style={{
+                  marginTop: '0.5rem', fontSize: '0.9rem', fontWeight: 600,
+                  color: res.payout > 0 ? 'var(--accent-green)' : 'var(--accent-red)'
+                }}>
+                  {res.payout > 0 ? `+ $${Math.round(res.payout)} 🎉` : `- $${betAmt} 😔`}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -106,14 +109,14 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
           </div>
         )}
 
-        {state.bets_placed && !state.winner && (
+        {Object.keys(state.bets || {}).length > 0 && !state.result && (
           <div className="flex items-center justify-between">
             <span className="text-muted">{t('betPlacedOn')} {betSide && t(betSide + 'Bet')}</span>
             <button className="btn btn-primary btn-lg" onClick={deal}>🂡 {t('dealCards')}</button>
           </div>
         )}
 
-        {state.winner && (
+        {state.result && (
           <div className="text-center mt-2">
             <button className="btn btn-primary" onClick={() => emit('baccarat_join', { room_id: rid })}>
               🔄 {t('newRound')}

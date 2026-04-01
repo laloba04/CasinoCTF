@@ -47,15 +47,21 @@ def _save_game(user_id, game_type, room_id, bet, result, payout, details=''):
             "INSERT INTO games (user_id, game_type, room_id, bet, result, payout, details) VALUES (?, ?, ?, ?, ?, ?, ?)",
             (user_id, game_type, room_id, bet, result, payout, details)
         )
-        net = payout - bet
-        cursor.execute("UPDATE users SET balance = balance + ? WHERE id = ?", (net, user_id))
+        # Bet was already deducted at bet time — only add back the gross payout
+        cursor.execute("UPDATE users SET balance = balance + ? WHERE id = ?", (payout, user_id))
+        # Compute profit for scoreboard (separate from balance update)
+        profit = payout - bet
+        cursor.execute("SELECT biggest_win FROM scoreboard WHERE user_id = ?", (user_id,))
+        row = cursor.fetchone()
+        current_biggest = (row['biggest_win'] if isinstance(row, dict) else row[0]) if row else 0
+        new_biggest = max(current_biggest or 0, payout)
         cursor.execute("""
             UPDATE scoreboard SET
                 games_played = games_played + 1,
                 total_winnings = total_winnings + ?,
-                biggest_win = MAX(biggest_win, ?)
+                biggest_win = ?
             WHERE user_id = ?
-        """, (max(0, net), max(0, payout), user_id))
+        """, (max(0, profit), new_biggest, user_id))
         db.commit()
     finally:
         db.close()

@@ -10,8 +10,6 @@ export default function CrapsTable({ gameState, emit, user, room }) {
   const BET_TYPES = [
     { key: 'pass', label: `✅ ${t('passLine')}`, desc: 'Win on 7/11, lose on 2/3/12', payout: '1:1' },
     { key: 'dont_pass', label: `❌ ${t('dontPass')}`, desc: 'Opposite of Pass', payout: '1:1' },
-    { key: 'come', label: `🟢 ${t('come')}`, desc: 'Like Pass after point', payout: '1:1' },
-    { key: 'dont_come', label: `🔴 ${t('dontCome')}`, desc: 'Opposite of Come', payout: '1:1' },
     { key: 'field', label: `🌾 ${t('field')}`, desc: 'Win on 2,3,4,9,10,11,12', payout: '1:1 / 2:1' },
     { key: 'any_seven', label: `7️⃣ ${t('anySeven')}`, desc: 'Next roll is 7', payout: '4:1' },
     { key: 'any_craps', label: `💀 ${t('anyCraps')}`, desc: 'Next roll is 2/3/12', payout: '7:1' },
@@ -81,21 +79,24 @@ export default function CrapsTable({ gameState, emit, user, room }) {
         {/* Active bets display */}
         <div className="text-center">
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{t('yourBets')}</div>
-          {state.my_bets && Object.keys(state.my_bets).length > 0 ? (
-            <div className="flex gap-1 justify-center" style={{ flexWrap: 'wrap' }}>
-              {Object.entries(state.my_bets).map(([type, amount]) => (
-                <span key={type} style={{
-                  padding: '0.3rem 0.8rem', borderRadius: 'var(--radius-sm)',
-                  background: 'var(--accent-purple-dim)', color: 'var(--accent-purple)',
-                  fontSize: '0.8rem', fontWeight: 600
-                }}>
-                  {type}: ${amount}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted" style={{ fontSize: '0.85rem' }}>{t('noBetsYet')}</p>
-          )}
+          {(() => {
+            const myBets = state.bets?.[String(user?.id)] || [];
+            return myBets.length > 0 ? (
+              <div className="flex gap-1 justify-center" style={{ flexWrap: 'wrap' }}>
+                {myBets.map((b, i) => (
+                  <span key={i} style={{
+                    padding: '0.3rem 0.8rem', borderRadius: 'var(--radius-sm)',
+                    background: 'var(--accent-purple-dim)', color: 'var(--accent-purple)',
+                    fontSize: '0.8rem', fontWeight: 600
+                  }}>
+                    {b.type}: ${b.amount}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted" style={{ fontSize: '0.85rem' }}>{t('noBetsYet')}</p>
+            );
+          })()}
         </div>
 
         {/* Results */}

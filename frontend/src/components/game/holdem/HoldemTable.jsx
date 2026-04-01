@@ -61,24 +61,23 @@ export default function HoldemTable({ gameState, emit, user, room }) {
 
               {/* Hole Cards */}
               <div className="hand" style={{ display: 'flex', gap: '0.3rem', justifyContent: 'center', marginBottom: '0.3rem' }}>
-                {(player.hand || []).map((card, ci) => (
+                {(player.hole_cards || []).map((card, ci) => (
                   <PlayingCard key={ci} card={card} />
                 ))}
               </div>
 
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {t('stack')}: ${player.stack || 0}
+                {t('stack')}: ${player.chips || 0}
                 {player.current_bet > 0 && <span className="text-gold"> • {t('bet')}: ${player.current_bet}</span>}
               </div>
 
-              {player.role && (
+              {uid === state.dealer && (
                 <div style={{
                   fontSize: '0.65rem', marginTop: '0.2rem', padding: '0.1rem 0.4rem',
                   borderRadius: '10px', display: 'inline-block',
-                  background: player.role === 'dealer' ? 'var(--accent-gold-dim)' : 'var(--accent-purple-dim)',
-                  color: player.role === 'dealer' ? 'var(--accent-gold)' : 'var(--accent-purple)'
+                  background: 'var(--accent-gold-dim)', color: 'var(--accent-gold)'
                 }}>
-                  {player.role === 'dealer' ? 'D' : player.role === 'sb' ? 'SB' : 'BB'}
+                  D
                 </div>
               )}
             </div>
@@ -86,16 +85,23 @@ export default function HoldemTable({ gameState, emit, user, room }) {
         </div>
 
         {/* Showdown results */}
-        {phase === 'showdown' && state.winners && (
+        {phase === 'showdown' && state.results && (
           <div className="fade-in text-center" style={{ marginTop: '1.5rem' }}>
-            {state.winners.map((w, i) => (
-              <div key={i} style={{
-                padding: '0.75rem', borderRadius: 'var(--radius-sm)', margin: '0.5rem auto',
-                maxWidth: '350px', background: 'var(--accent-green-dim)', color: 'var(--accent-green)', fontWeight: 700
-              }}>
-                🏆 {w.username === 'House Dealer' ? t('houseDealer') : w.username} {t('wins')} ${w.amount} {w.hand_name ? `${t('withHand')} ${w.hand_name}` : ''}
-              </div>
-            ))}
+            {Object.entries(state.results).map(([uid, res]) => {
+              const username = state.players?.[uid]?.username || uid;
+              return (
+                <div key={uid} style={{
+                  padding: '0.75rem', borderRadius: 'var(--radius-sm)', margin: '0.5rem auto',
+                  maxWidth: '350px',
+                  background: res.winner ? 'var(--accent-green-dim)' : 'rgba(0,0,0,0.3)',
+                  color: res.winner ? 'var(--accent-green)' : 'var(--text-muted)',
+                  fontWeight: 700
+                }}>
+                  {res.winner ? '🏆' : '🃏'} {username === 'House Dealer' ? t('houseDealer') : username}
+                  {res.winner ? ` ${t('wins')} $${res.payout}` : ''} {res.hand ? `— ${res.hand}` : ''}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

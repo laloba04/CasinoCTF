@@ -13,7 +13,7 @@ def list_challenges():
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("SELECT challenge_id FROM ctf_submissions WHERE user_id = ?", (g.user_id,))
+        cursor.execute("SELECT challenge_id FROM ctf_submissions WHERE user_id = %s", (g.user_id,))
         solved = {row['challenge_id'] for row in cursor.fetchall()}
 
         challenges = []
@@ -46,7 +46,7 @@ def submit_flag():
     try:
         cursor = db.cursor()
         cursor.execute(
-            "INSERT OR IGNORE INTO ctf_submissions (user_id, challenge_id, flag) VALUES (?, ?, ?)",
+            "INSERT INTO ctf_submissions (user_id, challenge_id, flag) VALUES (%s, %s, %s) ON CONFLICT (user_id, challenge_id) DO NOTHING",
             (g.user_id, challenge_id, flag)
         )
         db.commit()
@@ -76,13 +76,13 @@ def get_ctf_profile(user_id):
     try:
         cursor = db.cursor()
         cursor.execute(
-            "SELECT u.username, u.display_name, u.balance FROM users u WHERE u.id = ?", (user_id,)
+            "SELECT u.username, u.display_name, u.balance FROM users u WHERE u.id = %s", (user_id,)
         )
         user = cursor.fetchone()
         if not user:
             return jsonify({'error': 'User not found'}), 404
 
-        cursor.execute("SELECT challenge_id, solved_at FROM ctf_submissions WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT challenge_id, solved_at FROM ctf_submissions WHERE user_id = %s", (user_id,))
         submissions = [dict(row) for row in cursor.fetchall()]
 
         return jsonify({

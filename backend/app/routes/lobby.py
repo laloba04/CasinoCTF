@@ -15,7 +15,7 @@ def list_rooms():
         game_type = request.args.get('game_type')
         if game_type:
             cursor.execute(
-                "SELECT * FROM rooms WHERE status != 'finished' AND game_type = ? ORDER BY created_at DESC",
+                "SELECT * FROM rooms WHERE status != 'finished' AND game_type = %s ORDER BY created_at DESC",
                 (game_type,)
             )
         else:
@@ -45,7 +45,7 @@ def create_room():
     try:
         cursor = db.cursor()
         cursor.execute(
-            "INSERT INTO rooms (id, game_type, name, max_players, min_bet, max_bet, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO rooms (id, game_type, name, max_players, min_bet, max_bet, created_by) VALUES (%s, %s, %s, %s, %s, %s, %s)",
             (room_id, game_type, name, max_players, min_bet, max_bet, g.user_id)
         )
         db.commit()
@@ -63,7 +63,7 @@ def get_room(room_id):
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM rooms WHERE id = ?", (room_id,))
+        cursor.execute("SELECT * FROM rooms WHERE id = %s", (room_id,))
         room = cursor.fetchone()
         if room:
             return jsonify({'room': dict(room)})

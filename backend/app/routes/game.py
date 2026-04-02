@@ -13,7 +13,7 @@ def get_history():
         cursor = db.cursor()
         limit = request.args.get('limit', 20, type=int)
         cursor.execute(
-            "SELECT * FROM games WHERE user_id = ? ORDER BY created_at DESC LIMIT ?",
+            "SELECT * FROM games WHERE user_id = %s ORDER BY created_at DESC LIMIT %s",
             (g.user_id, limit)
         )
         games = [dict(row) for row in cursor.fetchall()]
@@ -32,7 +32,7 @@ def get_stats():
             SELECT game_type, COUNT(*) as played,
                    SUM(CASE WHEN result = 'win' OR result = 'blackjack' THEN 1 ELSE 0 END) as wins,
                    SUM(payout) as total_payout, SUM(bet) as total_bet
-            FROM games WHERE user_id = ? GROUP BY game_type
+            FROM games WHERE user_id = %s GROUP BY game_type
         """, (g.user_id,))
         stats = [dict(row) for row in cursor.fetchall()]
         return jsonify({'stats': stats})
@@ -46,7 +46,7 @@ def get_balance():
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("SELECT balance FROM users WHERE id = ?", (g.user_id,))
+        cursor.execute("SELECT balance FROM users WHERE id = %s", (g.user_id,))
         row = cursor.fetchone()
         return jsonify({'balance': row['balance'] if row else 0})
     finally:

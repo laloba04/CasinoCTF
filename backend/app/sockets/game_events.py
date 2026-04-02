@@ -44,23 +44,23 @@ def _save_game(user_id, game_type, room_id, bet, result, payout, details=''):
     try:
         cursor = db.cursor()
         cursor.execute(
-            "INSERT INTO games (user_id, game_type, room_id, bet, result, payout, details) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO games (user_id, game_type, room_id, bet, result, payout, details) VALUES (%s, %s, %s, %s, %s, %s, %s)",
             (user_id, game_type, room_id, bet, result, payout, details)
         )
         # Bet was already deducted at bet time — only add back the gross payout
-        cursor.execute("UPDATE users SET balance = balance + ? WHERE id = ?", (payout, user_id))
+        cursor.execute("UPDATE users SET balance = balance + %s WHERE id = %s", (payout, user_id))
         # Compute profit for scoreboard (separate from balance update)
         profit = payout - bet
-        cursor.execute("SELECT biggest_win FROM scoreboard WHERE user_id = ?", (user_id,))
+        cursor.execute("SELECT biggest_win FROM scoreboard WHERE user_id = %s", (user_id,))
         row = cursor.fetchone()
         current_biggest = (row['biggest_win'] if isinstance(row, dict) else row[0]) if row else 0
         new_biggest = max(current_biggest or 0, payout)
         cursor.execute("""
             UPDATE scoreboard SET
                 games_played = games_played + 1,
-                total_winnings = total_winnings + ?,
-                biggest_win = ?
-            WHERE user_id = ?
+                total_winnings = total_winnings + %s,
+                biggest_win = %s
+            WHERE user_id = %s
         """, (max(0, profit), new_biggest, user_id))
         db.commit()
     finally:
@@ -75,7 +75,7 @@ def _check_balance(user_id, amount):
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("SELECT balance FROM users WHERE id = ?", (user_id,))
+        cursor.execute("SELECT balance FROM users WHERE id = %s", (user_id,))
         row = cursor.fetchone()
         return row['balance'] if row else 0
     finally:
@@ -86,7 +86,7 @@ def _deduct_balance(user_id, amount):
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("UPDATE users SET balance = balance - ? WHERE id = ?", (amount, user_id))
+        cursor.execute("UPDATE users SET balance = balance - %s WHERE id = %s", (amount, user_id))
         db.commit()
     finally:
         db.close()

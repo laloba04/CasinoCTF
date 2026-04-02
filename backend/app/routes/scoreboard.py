@@ -33,8 +33,8 @@ def update_display_name():
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("UPDATE scoreboard SET display_name = ? WHERE user_id = ?", (display_name, g.user_id))
-        cursor.execute("UPDATE users SET display_name = ? WHERE id = ?", (display_name, g.user_id))
+        cursor.execute("UPDATE scoreboard SET display_name = %s WHERE user_id = %s", (display_name, g.user_id))
+        cursor.execute("UPDATE users SET display_name = %s WHERE id = %s", (display_name, g.user_id))
         db.commit()
         return jsonify({'success': True, 'display_name': display_name})
     finally:

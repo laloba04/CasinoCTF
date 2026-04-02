@@ -22,13 +22,13 @@ def register():
     try:
         cursor = db.cursor()
         cursor.execute(
-            "INSERT INTO users (username, password, display_name) VALUES (?, ?, ?) RETURNING id",
+            "INSERT INTO users (username, password, display_name) VALUES (%s, %s, %s) RETURNING id",
             (username, password, display_name)
         )
         row = cursor.fetchone()
         user_id = row['id'] if isinstance(row, dict) else row[0]
         cursor.execute(
-            "INSERT INTO scoreboard (user_id, display_name) VALUES (?, ?)",
+            "INSERT INTO scoreboard (user_id, display_name) VALUES (%s, %s)",
             (user_id, display_name)
         )
         db.commit()
@@ -38,7 +38,8 @@ def register():
             'user': {'id': user_id, 'username': username, 'display_name': display_name, 'balance': 5000.0}
         }), 201
     except Exception as e:
-        if 'UNIQUE' in str(e):
+        msg = str(e).lower()
+        if 'unique' in msg or 'duplicate' in msg:
             return jsonify({'error': 'Username already exists'}), 409
         return jsonify({'error': str(e)}), 500
     finally:
@@ -50,7 +51,7 @@ def login():
     """
     CTF VULNERABILITY #1 — Jackpot Query (SQL Injection)
     Uses string concatenation instead of parameterized queries.
-    FIX: cursor.execute("SELECT ... WHERE username = ? AND password = ?", (username, password))
+    FIX: cursor.execute("SELECT ... WHERE username = %s AND password = %s", (username, password))
     """
     data = request.get_json()
     username = data.get('username', '')
@@ -85,7 +86,7 @@ def get_me():
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("SELECT id, username, display_name, balance, is_admin FROM users WHERE id = ?", (g.user_id,))
+        cursor.execute("SELECT id, username, display_name, balance, is_admin FROM users WHERE id = %s", (g.user_id,))
         user = cursor.fetchone()
         if user:
             return jsonify({

@@ -25,7 +25,7 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
         {/* Dealer */}
         <div className="text-center mb-2">
           <div className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-            {t('dealer')} {state.dealer?.score !== '?' ? `• ${state.dealer?.score}` : ''}
+            {t('dealer')} {state.dealer?.score > 0 ? `• ${state.dealer?.score}` : ''}
           </div>
           <div className="hand justify-center" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
             {(state.dealer?.hand || []).map((card, i) => (

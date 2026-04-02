@@ -122,6 +122,13 @@ def register_game_events(socketio):
         if uid and str(uid) not in {str(k) for k in game.players}:
             game.add_player(uid, username)
 
+        # Auto-reset if game is stuck in a non-betting phase and this player
+        # wasn't part of the active hand (e.g. joining a room mid-game)
+        if game.phase != 'betting':
+            active_uids = [str(u) for u in (game.player_order or [])]
+            if str(uid) not in active_uids:
+                game.reset()
+
         amount = data.get('amount', 0)
         # VULNERABLE: No proper balance check (CTF #5)
         result = game.place_bet(uid, amount)

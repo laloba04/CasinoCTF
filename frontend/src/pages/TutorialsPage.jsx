@@ -1,265 +1,243 @@
 import { useState } from 'react';
 import { useI18n } from '../hooks/useI18n';
 
-const TUTORIALS = {
-  blackjack: {
-    icon: '🃏',
-    sections: [
-      {
-        title: 'Goal',
-        content: 'Beat the dealer by getting a hand value as close to 21 as possible without going over.'
-      },
-      {
-        title: 'Card Values',
-        table: {
-          headers: ['Card', 'Value'],
-          rows: [
-            ['2–10', 'Face value'],
-            ['J, Q, K', '10'],
-            ['Ace', '1 or 11 (whichever benefits you)'],
+function getTutorials(t) {
+  return {
+    blackjack: {
+      icon: '🃏',
+      sections: [
+        {
+          title: t('tut_goal'),
+          content: t('tut_bj_goal')
+        },
+        {
+          title: t('tut_cardValues'),
+          table: {
+            headers: [t('tut_card'), t('tut_value')],
+            rows: [
+              ['2–10', t('tut_faceValue')],
+              ['J, Q, K', '10'],
+              ['As', t('tut_aceValue')],
+            ]
+          }
+        },
+        {
+          title: t('tut_flow'),
+          list: [
+            t('tut_bj_flow1'), t('tut_bj_flow2'), t('tut_bj_flow3'),
+            t('tut_bj_flow4'), t('tut_bj_flow5'), t('tut_bj_flow6'),
+            t('tut_bj_flow7'), t('tut_bj_flow8'),
+          ]
+        },
+        {
+          title: t('tut_payouts'),
+          table: {
+            headers: [t('tut_result'), t('tut_payout')],
+            rows: [
+              [t('win'), '1:1'],
+              [t('tut_bj_natural'), '3:2'],
+              [t('push'), t('tut_betReturned')],
+              [t('tut_bust'), t('tut_loseBet')],
+            ]
+          }
+        },
+        {
+          title: t('tut_tips'),
+          list: [
+            t('tut_bj_tip1'), t('tut_bj_tip2'),
+            t('tut_bj_tip3'), t('tut_bj_tip4'), t('tut_bj_tip5'),
           ]
         }
-      },
-      {
-        title: 'The Flow',
-        list: [
-          'Place your bet — choose chips and click Bet.',
-          'You get 2 cards face up. Dealer gets 1 face up, 1 face down.',
-          'Hit — draw another card.',
-          'Stand — keep your hand and end your turn.',
-          'Double Down — double your bet and draw exactly one more card.',
-          'Split — if your first 2 cards match, split into 2 hands (costs another bet).',
-          'Dealer reveals hidden card and must hit until reaching 17+.',
-          'Closest to 21 without busting wins.',
-        ]
-      },
-      {
-        title: 'Payouts',
-        table: {
-          headers: ['Result', 'Payout'],
-          rows: [
-            ['Win', '1:1'],
-            ['Blackjack (Ace + 10 on first 2 cards)', '3:2'],
-            ['Push (tie)', 'Bet returned'],
-            ['Bust (over 21)', 'Lose bet'],
+      ]
+    },
+    holdem: {
+      icon: '♠️',
+      sections: [
+        {
+          title: t('tut_goal'),
+          content: t('tut_holdem_goal')
+        },
+        {
+          title: t('tut_bettingRounds'),
+          table: {
+            headers: [t('tut_round'), t('tut_communityCards')],
+            rows: [
+              ['Pre-Flop', t('tut_preflop_desc')],
+              ['Flop', t('tut_flop_desc')],
+              ['Turn', t('tut_turn_desc')],
+              ['River', t('tut_river_desc')],
+              ['Showdown', t('tut_showdown_desc')],
+            ]
+          }
+        },
+        {
+          title: t('tut_actions'),
+          list: [
+            t('tut_fold_desc'), t('tut_check_desc'), t('tut_call_desc'),
+            t('tut_raise_desc'), t('tut_allin_desc'),
+          ]
+        },
+        {
+          title: t('tut_handRankings'),
+          table: {
+            headers: [t('tut_hand'), t('tut_example')],
+            rows: [
+              [t('Royal Flush'), 'A K Q J 10 ♠'],
+              [t('Straight Flush'), '7 8 9 10 J ♥'],
+              [t('Four of a Kind'), 'K K K K 3'],
+              [t('Full House'), 'Q Q Q 7 7'],
+              [t('Flush'), t('tut_flush_ex')],
+              [t('Straight'), '4 5 6 7 8'],
+              [t('Three of a Kind'), 'J J J 4 2'],
+              [t('Two Pair'), '9 9 4 4 K'],
+              [t('One Pair'), 'A A 7 3 2'],
+              [t('High Card'), t('tut_highcard_ex')],
+            ]
+          }
+        },
+        {
+          title: t('tut_tips'),
+          list: [
+            t('tut_holdem_tip1'), t('tut_holdem_tip2'), t('tut_holdem_tip3'),
           ]
         }
-      },
-      {
-        title: 'Tips',
-        list: [
-          'Always split Aces and 8s.',
-          'Never split 10s or 5s.',
-          'Double Down on 11 when dealer shows 2–10.',
-          'Stand on 17+ against a dealer showing a weak card (2–6).',
-          'Table uses 6 decks (312 cards). Dealer hits on soft 17.',
-        ]
-      }
-    ]
-  },
-  holdem: {
-    icon: '♠️',
-    sections: [
-      {
-        title: 'Goal',
-        content: 'Make the best 5-card poker hand using your 2 hole cards and 5 community cards.'
-      },
-      {
-        title: 'Betting Rounds',
-        table: {
-          headers: ['Round', 'Community Cards'],
-          rows: [
-            ['Pre-Flop', 'None — bet with just your 2 hole cards'],
-            ['Flop', '3 cards revealed'],
-            ['Turn', '1 more card (4 total)'],
-            ['River', '1 more card (5 total)'],
-            ['Showdown', 'Best hand wins the pot'],
+      ]
+    },
+    roulette: {
+      icon: '🎡',
+      sections: [
+        {
+          title: t('tut_goal'),
+          content: t('tut_roulette_goal')
+        },
+        {
+          title: t('tut_betTypes'),
+          table: {
+            headers: [t('tut_bet'), t('tut_description'), t('tut_payout')],
+            rows: [
+              [t('tut_straight'), t('tut_straight_desc'), '35:1'],
+              [t('tut_redBlack'), t('tut_redBlack_desc'), '1:1'],
+              [t('tut_evenOdd'), t('tut_evenOdd_desc'), '1:1'],
+              ['1-18 / 19-36', t('tut_lowhigh_desc'), '1:1'],
+              [t('tut_dozen'), t('tut_dozen_desc'), '2:1'],
+            ]
+          }
+        },
+        {
+          title: t('tut_flow'),
+          list: [
+            t('tut_roulette_flow1'), t('tut_roulette_flow2'),
+            t('tut_roulette_flow3'), t('tut_roulette_flow4'),
           ]
         }
-      },
-      {
-        title: 'Actions',
-        list: [
-          'Fold — give up your hand, lose any bet.',
-          'Check — pass without betting (only if no bet has been placed yet).',
-          'Call — match the current bet.',
-          'Raise — increase the bet.',
-          'All In — bet all your chips.',
-        ]
-      },
-      {
-        title: 'Hand Rankings (Best → Worst)',
-        table: {
-          headers: ['Hand', 'Example'],
-          rows: [
-            ['Royal Flush', 'A K Q J 10 (same suit)'],
-            ['Straight Flush', '7 8 9 10 J (same suit)'],
-            ['Four of a Kind', 'K K K K 3'],
-            ['Full House', 'Q Q Q 7 7'],
-            ['Flush', 'Any 5 of the same suit'],
-            ['Straight', '4 5 6 7 8 (any suits)'],
-            ['Three of a Kind', 'J J J 4 2'],
-            ['Two Pair', '9 9 4 4 K'],
-            ['One Pair', 'A A 7 3 2'],
-            ['High Card', 'Highest card in hand'],
+      ]
+    },
+    baccarat: {
+      icon: '🂡',
+      sections: [
+        {
+          title: t('tut_goal'),
+          content: t('tut_baccarat_goal')
+        },
+        {
+          title: t('tut_cardValues'),
+          table: {
+            headers: [t('tut_card'), t('tut_value')],
+            rows: [
+              ['As', '1'],
+              ['2–9', t('tut_faceValue')],
+              ['10, J, Q, K', '0'],
+            ]
+          }
+        },
+        {
+          title: t('tut_flow'),
+          list: [
+            t('tut_baccarat_flow1'), t('tut_baccarat_flow2'), t('tut_baccarat_flow3'),
+            t('tut_baccarat_flow4'), t('tut_baccarat_flow5'),
+          ]
+        },
+        {
+          title: t('tut_payouts'),
+          table: {
+            headers: [t('tut_bet'), t('tut_payout')],
+            rows: [
+              [t('tut_playerWins'), '1:1'],
+              [t('tut_bankerWins'), '0.95:1 (5%)'],
+              [t('tie'), '8:1'],
+            ]
+          }
+        }
+      ]
+    },
+    craps: {
+      icon: '🎲',
+      sections: [
+        {
+          title: t('tut_goal'),
+          content: t('tut_craps_goal')
+        },
+        {
+          title: t('tut_betTypes'),
+          table: {
+            headers: [t('tut_bet'), t('tut_winCondition'), t('tut_payout')],
+            rows: [
+              ['Pass Line', t('tut_passline_desc'), '1:1'],
+              ["Don't Pass", t('tut_dontpass_desc'), '1:1'],
+              [t('field'), t('tut_field_desc'), '1:1 (2:1)'],
+              [t('anySeven'), t('tut_anyseven_desc'), '4:1'],
+              [t('anyCraps'), t('tut_anycraps_desc'), '7:1'],
+            ]
+          }
+        },
+        {
+          title: t('tut_flow'),
+          list: [
+            t('tut_craps_flow1'), t('tut_craps_flow2'), t('tut_craps_flow3'),
+            t('tut_craps_flow4'), t('tut_craps_flow5'), t('tut_craps_flow6'),
           ]
         }
-      },
-      {
-        title: 'Tips',
-        list: [
-          'You need at least 2 players to start a hand.',
-          'The dealer button rotates after each hand.',
-          'Your best 5-card hand is auto-selected from 2 hole + 5 community cards.',
-        ]
-      }
-    ]
-  },
-  roulette: {
-    icon: '🎡',
-    sections: [
-      {
-        title: 'Goal',
-        content: 'Predict where the ball will land on the spinning wheel (numbers 0–36). European Roulette — single zero, house edge 2.7%.'
-      },
-      {
-        title: 'Bet Types',
-        table: {
-          headers: ['Bet', 'Description', 'Payout'],
-          rows: [
-            ['Straight', 'One specific number', '35:1'],
-            ['Red / Black', 'Color of the number', '1:1'],
-            ['Even / Odd', 'Parity of the number', '1:1'],
-            ['1-18 / 19-36', 'Low or high half', '1:1'],
-            ['1st/2nd/3rd 12', 'Group of 12 numbers', '2:1'],
+      ]
+    },
+    slots: {
+      icon: '🎰',
+      sections: [
+        {
+          title: t('tut_goal'),
+          content: t('tut_slots_goal')
+        },
+        {
+          title: t('tut_controls'),
+          list: [
+            t('tut_slots_ctrl1'), t('tut_slots_ctrl2'),
+            t('tut_slots_ctrl3'), t('tut_slots_ctrl4'),
           ]
+        },
+        {
+          title: t('tut_payouts'),
+          table: {
+            headers: [t('tut_symbols'), t('tut_multiplier')],
+            rows: [
+              ['💎💎💎', '50×'],
+              ['7️⃣7️⃣7️⃣', '20×'],
+              ['🍀🍀🍀', '10×'],
+              ['⭐⭐⭐', '5×'],
+              ['🍋🍋🍋', '3×'],
+              ['🍒🍒🍒', '2×'],
+              ['🎯🎯🎯 (Scatter)', t('tut_scatter_desc')],
+            ]
+          }
         }
-      },
-      {
-        title: 'The Flow',
-        list: [
-          'Select chip value, then click any bet to place it.',
-          'You can place multiple bets before spinning.',
-          'Click "Spin the Wheel!" to launch the ball.',
-          'Winnings are paid out automatically.',
-        ]
-      }
-    ]
-  },
-  baccarat: {
-    icon: '🂡',
-    sections: [
-      {
-        title: 'Goal',
-        content: 'Bet on which hand (Player or Banker) will be closest to 9, or if they will tie.'
-      },
-      {
-        title: 'Card Values',
-        table: {
-          headers: ['Card', 'Value'],
-          rows: [
-            ['Ace', '1'],
-            ['2–9', 'Face value'],
-            ['10, J, Q, K', '0'],
-          ]
-        }
-      },
-      {
-        title: 'The Flow',
-        list: [
-          'Choose Player, Banker, or Tie.',
-          'Enter your bet amount and click your choice to confirm.',
-          'Click "Deal Cards" when ready.',
-          'If total exceeds 9, only the last digit counts (e.g. 15 = 5).',
-          'A natural 8 or 9 wins automatically — no more cards drawn.',
-        ]
-      },
-      {
-        title: 'Payouts',
-        table: {
-          headers: ['Bet', 'Payout'],
-          rows: [
-            ['Player wins', '1:1'],
-            ['Banker wins', '0.95:1 (5% commission)'],
-            ['Tie', '8:1'],
-          ]
-        }
-      }
-    ]
-  },
-  craps: {
-    icon: '🎲',
-    sections: [
-      {
-        title: 'Goal',
-        content: 'Bet on the outcome of dice rolls. One player is the "shooter" — they roll for everyone at the table.'
-      },
-      {
-        title: 'Bet Types',
-        table: {
-          headers: ['Bet', 'Win condition', 'Payout'],
-          rows: [
-            ['Pass Line', 'Come-out: 7/11 win, 2/3/12 lose. Point: hit point before 7', '1:1'],
-            ["Don't Pass", 'Opposite of Pass Line', '1:1'],
-            ['Field', 'Roll 2, 3, 4, 9, 10, 11, or 12', '1:1 (2:1 on 2 or 12)'],
-            ['Any Seven', 'Next roll is 7', '4:1'],
-            ['Any Craps', 'Next roll is 2, 3, or 12', '7:1'],
-          ]
-        }
-      },
-      {
-        title: 'The Flow',
-        list: [
-          'Place your bets.',
-          'The shooter rolls — first roll is the "Come Out" roll.',
-          '7 or 11 on come-out: Pass Line wins.',
-          '2, 3, or 12 on come-out: Don\'t Pass wins (craps).',
-          'Any other number sets the "Point".',
-          'Shooter keeps rolling until they hit the Point (Pass wins) or roll a 7 (Don\'t Pass wins).',
-        ]
-      }
-    ]
-  },
-  slots: {
-    icon: '🎰',
-    sections: [
-      {
-        title: 'Goal',
-        content: 'Spin the reels and match symbols across paylines. More matching symbols = bigger payout.'
-      },
-      {
-        title: 'Controls',
-        list: [
-          'Bet/Line — how much to bet per active payline.',
-          'Lines — how many paylines to activate (1, 3, 5, 7, or 9).',
-          'Total Bet = Bet/Line × Lines.',
-          'Click SPIN to play.',
-        ]
-      },
-      {
-        title: 'Payouts',
-        table: {
-          headers: ['Symbols', 'Multiplier'],
-          rows: [
-            ['💎💎💎', '50×'],
-            ['7️⃣7️⃣7️⃣', '20×'],
-            ['🍀🍀🍀', '10×'],
-            ['⭐⭐⭐', '5×'],
-            ['🍋🍋🍋', '3×'],
-            ['🍒🍒🍒', '2×'],
-            ['Scatter 🎯 (3+)', 'Free spins bonus'],
-          ]
-        }
-      }
-    ]
-  }
-};
+      ]
+    }
+  };
+}
 
 export default function TutorialsPage() {
   const { t } = useI18n();
   const [selected, setSelected] = useState('blackjack');
+  const TUTORIALS = getTutorials(t);
   const tutorial = TUTORIALS[selected];
-
   const GAMES = Object.keys(TUTORIALS);
 
   return (
@@ -271,7 +249,6 @@ export default function TutorialsPage() {
         </div>
       </div>
 
-      {/* Game selector */}
       <div className="flex gap-1 mb-2" style={{ flexWrap: 'wrap' }}>
         {GAMES.map(g => (
           <button key={g}
@@ -282,7 +259,6 @@ export default function TutorialsPage() {
         ))}
       </div>
 
-      {/* Tutorial content */}
       <div className="card fade-in" style={{ maxWidth: '760px' }}>
         <div className="card-header" style={{ fontSize: '1.2rem' }}>
           {tutorial.icon} {t('howToPlay')} {t(selected)}

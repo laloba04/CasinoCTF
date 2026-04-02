@@ -11,6 +11,7 @@ import ScoreboardPage from './pages/ScoreboardPage';
 import CTFPage from './pages/CTFPage';
 import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
+import TutorialsPage from './pages/TutorialsPage';
 import './index.css';
 
 function ProtectedRoute({ children }) {
@@ -37,6 +38,7 @@ function AppRoutes() {
         <Route path="/ctf" element={<ProtectedRoute><CTFPage /></ProtectedRoute>} />
         <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/tutorials" element={<ProtectedRoute><TutorialsPage /></ProtectedRoute>} />
       </Routes>
     </SocketProvider>
   );

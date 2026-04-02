@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../utils/api';
 import { useAuth } from '../hooks/useAuth';
 import { useI18n } from '../hooks/useI18n';
@@ -46,6 +46,7 @@ export default function LobbyPage() {
           <p className="page-subtitle">{t('lobbySubtitle')}</p>
         </div>
         <div className="flex gap-1">
+          <Link to="/tutorials" className="btn btn-outline">📖 {t('tutorials')}</Link>
           <button className="btn btn-gold" onClick={() => navigate('/game/slots')}>🎰 {t('quickSlots')}</button>
           <button className="btn btn-primary" onClick={() => setShowCreate(!showCreate)}>{t('createTable')}</button>
         </div>

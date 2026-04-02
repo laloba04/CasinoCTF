@@ -208,6 +208,11 @@ export default {
   baccaratDesc: 'Player vs Banker, closest to 9 wins',
   crapsDesc: 'Roll the dice and ride your luck',
 
+  // Tutorials
+  tutorials: 'Tutorials',
+  tutorialsSubtitle: 'Learn how to play every game',
+  howToPlay: 'How to Play',
+
   // Poker hand names (from backend)
   'Royal Flush': 'Royal Flush',
   'Straight Flush': 'Straight Flush',

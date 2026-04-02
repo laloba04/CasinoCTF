@@ -89,6 +89,23 @@ def init_db():
             (admin_id, 'Casino Admin')
         )
 
+    # Create default rooms if none exist
+    cursor.execute("SELECT COUNT(*) as cnt FROM rooms")
+    row = cursor.fetchone()
+    if (row['cnt'] if isinstance(row, dict) else row[0]) == 0:
+        default_rooms = [
+            ('blackjack-1', 'blackjack', '🃏 Blackjack Classic', 7, 10, 1000),
+            ('holdem-1',    'holdem',    '♠️ Texas Hold\'em',    9, 10, 500),
+            ('roulette-1',  'roulette',  '🎡 Roulette Royale',  8, 5,  500),
+            ('baccarat-1',  'baccarat',  '🂡 Baccarat VIP',      6, 25, 2000),
+            ('craps-1',     'craps',     '🎲 Craps Table',       8, 5,  500),
+        ]
+        for rid, gtype, name, maxp, minb, maxb in default_rooms:
+            cursor.execute(
+                "INSERT INTO rooms (id, game_type, name, max_players, min_bet, max_bet) VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT (id) DO NOTHING",
+                (rid, gtype, name, maxp, minb, maxb)
+            )
+
     db.commit()
     cursor.close()
     db.close()

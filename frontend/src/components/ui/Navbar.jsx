@@ -24,7 +24,8 @@ export default function Navbar() {
               <Link to="/lobby" className={isActive('/lobby')}>🃏 {t('lobby')}</Link>
               <Link to="/scoreboard" className={isActive('/scoreboard')}>🏆 {t('ranking')}</Link>
               <Link to="/ctf" className={isActive('/ctf')}>🔓 {t('ctf')}</Link>
-              <Link to="/history" className={isActive('/history')}>📊 {t('history')}</Link>
+              <Link to="/tutorials" className={isActive('/tutorials')}>📖 <span className="hide-mobile">{t('tutorials')}</span></Link>
+              <Link to="/history" className={isActive('/history')}>📊 <span className="hide-mobile">{t('history')}</span></Link>
               <Link to="/profile" className={isActive('/profile')}>👤 {t('profile')}</Link>
               <div className="balance-badge">💰 ${user.balance?.toLocaleString('en-US', { minimumFractionDigits: 0 })}</div>
               <span style={{ color: connected ? 'var(--accent-green)' : 'var(--accent-red)', fontSize: '0.7rem' }}>

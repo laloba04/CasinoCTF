@@ -208,6 +208,11 @@ export default {
   baccaratDesc: 'Jugador vs Banca, el más cercano a 9 gana',
   crapsDesc: 'Tira los dados y prueba tu suerte',
 
+  // Tutorials
+  tutorials: 'Tutoriales',
+  tutorialsSubtitle: 'Aprende a jugar cada juego',
+  howToPlay: 'Cómo Jugar a',
+
   // Poker hand names (from backend)
   'Royal Flush': 'Escalera Real',
   'Straight Flush': 'Escalera de Color',

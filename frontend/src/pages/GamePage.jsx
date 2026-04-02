@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSocket } from '../hooks/useSocket';
 import { useAuth } from '../hooks/useAuth';
@@ -23,11 +23,21 @@ const GAME_COMPONENTS = {
 
 export default function GamePage() {
   const { roomId } = useParams();
-  const { joinRoom, leaveRoom, gameState, emit } = useSocket();
+  const { joinRoom, leaveRoom, gameState, emit, connected } = useSocket();
   const { user, refreshBalance } = useAuth();
   const { t } = useI18n();
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
+  const prevConnected = useRef(false);
+
+  // Re-send game-specific join on socket reconnect
+  useEffect(() => {
+    if (connected && !prevConnected.current && room && roomId !== 'slots') {
+      const joinEvent = `${room.game_type}_join`;
+      setTimeout(() => emit(joinEvent, { room_id: roomId }), 300);
+    }
+    prevConnected.current = connected;
+  }, [connected]);
 
   useEffect(() => {
     if (roomId === 'slots') {

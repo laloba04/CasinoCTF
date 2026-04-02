@@ -7,6 +7,7 @@ const SocketContext = createContext(null);
 export function SocketProvider({ children }) {
   const { user } = useAuth();
   const socketRef = useRef(null);
+  const currentRoomRef = useRef(null);
   const [connected, setConnected] = useState(false);
   const [gameState, setGameState] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
@@ -20,7 +21,13 @@ export function SocketProvider({ children }) {
       transports: ['websocket', 'polling']
     });
 
-    socket.on('connect', () => setConnected(true));
+    socket.on('connect', () => {
+      setConnected(true);
+      // Re-join room on reconnect so server knows our room_id again
+      if (currentRoomRef.current) {
+        socket.emit('join_room', { room_id: currentRoomRef.current });
+      }
+    });
     socket.on('disconnect', () => setConnected(false));
     socket.on('game_state', (state) => setGameState(state));
     socket.on('chat_message', (msg) => setChatMessages(prev => [...prev.slice(-99), msg]));
@@ -43,12 +50,14 @@ export function SocketProvider({ children }) {
   };
 
   const joinRoom = (roomId) => {
+    currentRoomRef.current = roomId;
     emit('join_room', { room_id: roomId });
     setChatMessages([]);
     setGameState(null);
   };
 
   const leaveRoom = (roomId) => {
+    currentRoomRef.current = null;
     emit('leave_room', { room_id: roomId });
     setGameState(null);
     setChatMessages([]);

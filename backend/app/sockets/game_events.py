@@ -171,9 +171,17 @@ def register_game_events(socketio):
         game = active_games.get(room_id)
         if not game:
             return emit('error', {'message': 'No active game'})
-        result = game.double_down(user['user_id'])
+        uid = user['user_id']
+        p = game.players.get(uid)
+        if not p:
+            return emit('error', {'message': 'Not in this game'})
+        a = p['active_hand']
+        original_bet = p['bets'][a] if p['bets'] else 0
+        result = game.double_down(uid)
         if isinstance(result, dict) and 'error' in result:
             return emit('error', result)
+        # Deduct the extra bet added by double down (bet doubled, so deduct original amount again)
+        _deduct_balance(uid, original_bet)
         _broadcast_state(game, room_id)
 
     @socketio.on('bj_split')
@@ -183,9 +191,17 @@ def register_game_events(socketio):
         game = active_games.get(room_id)
         if not game:
             return emit('error', {'message': 'No active game'})
-        result = game.split(user['user_id'])
+        uid = user['user_id']
+        p = game.players.get(uid)
+        if not p:
+            return emit('error', {'message': 'Not in this game'})
+        a = p['active_hand']
+        split_bet = p['bets'][a] if p['bets'] else 0
+        result = game.split(uid)
         if isinstance(result, dict) and 'error' in result:
             return emit('error', result)
+        # Deduct the second hand's bet added by split
+        _deduct_balance(uid, split_bet)
         _broadcast_state(game, room_id)
 
     @socketio.on('bj_reset')

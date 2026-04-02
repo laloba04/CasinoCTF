@@ -139,6 +139,7 @@ export default {
   field: 'Field',
   anySeven: 'Any Seven',
   anyCraps: 'Any Craps',
+  isRolling: 'is rolling',
 
   // Scoreboard
   scoreboard: 'Scoreboard',

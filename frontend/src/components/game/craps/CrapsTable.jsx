@@ -6,6 +6,8 @@ export default function CrapsTable({ gameState, emit, user, room }) {
   const { t } = useI18n();
   const state = gameState || {};
   const rid = room?.id;
+  const isShooter = !state.shooter || state.shooter === String(user?.id);
+  const shooterName = state.shooter && state.players?.[state.shooter]?.username;
 
   const BET_TYPES = [
     { key: 'pass', label: `✅ ${t('passLine')}`, desc: 'Win on 7/11, lose on 2/3/12', payout: '1:1' },
@@ -140,7 +142,12 @@ export default function CrapsTable({ gameState, emit, user, room }) {
           ))}
         </div>
 
-        <button className="btn btn-gold btn-lg" onClick={rollDice} style={{ width: '100%' }}>
+        {!isShooter && (
+          <p className="text-muted" style={{ fontSize: '0.85rem', textAlign: 'center', marginBottom: '0.5rem' }}>
+            ⏳ {shooterName || t('opponent')} {t('isRolling')}...
+          </p>
+        )}
+        <button className="btn btn-gold btn-lg" onClick={rollDice} disabled={!isShooter} style={{ width: '100%' }}>
           🎲 {t('rollDice')}
         </button>
       </div>

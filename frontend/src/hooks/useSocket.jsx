@@ -12,6 +12,8 @@ export function SocketProvider({ children }) {
   const [gameState, setGameState] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [roomPlayers, setRoomPlayers] = useState({});
+  const [socketError, setSocketError] = useState(null);
+  const errorTimerRef = useRef(null);
 
   useEffect(() => {
     if (!user) return;
@@ -36,7 +38,12 @@ export function SocketProvider({ children }) {
     socket.on('error', (err) => {
       const msg = err?.message || err?.error || '';
       const ignore = ['No active game', 'Join a room first', 'Not in game', 'Not your turn', 'Not in this game'];
-      if (!ignore.some(i => msg.includes(i))) console.warn('Socket:', err);
+      if (!ignore.some(i => msg.includes(i))) {
+        console.warn('Socket:', err);
+        setSocketError(msg);
+        if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+        errorTimerRef.current = setTimeout(() => setSocketError(null), 3500);
+      }
     });
     socket.on('slots_result', (result) => setGameState(result));
     socket.on('roulette_result', (result) => setGameState(prev => ({ ...prev, ...result })));
@@ -68,7 +75,7 @@ export function SocketProvider({ children }) {
   return (
     <SocketContext.Provider value={{
       connected, gameState, setGameState, chatMessages, roomPlayers,
-      emit, joinRoom, leaveRoom, sendChat
+      socketError, emit, joinRoom, leaveRoom, sendChat
     }}>
       {children}
     </SocketContext.Provider>

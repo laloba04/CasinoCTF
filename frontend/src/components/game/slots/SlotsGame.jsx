@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSocket } from '../../../hooks/useSocket';
 import { useAuth } from '../../../hooks/useAuth';
 import { useI18n } from '../../../hooks/useI18n';
@@ -12,11 +12,17 @@ export default function SlotsGame() {
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState(null);
 
+  useEffect(() => {
+    if (gameState?.reels) {
+      setSpinning(false);
+      refreshBalance();
+    }
+  }, [gameState?.reels]);
+
   const spin = () => {
     setSpinning(true);
     setResult(null);
     emit('slots_spin', { bet_per_line: betPerLine, lines });
-    setTimeout(() => setSpinning(false), 1500);
   };
 
   const displayResult = gameState?.reels ? gameState : result;

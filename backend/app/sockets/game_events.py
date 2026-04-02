@@ -92,6 +92,16 @@ def _deduct_balance(user_id, amount):
         db.close()
 
 
+def _credit_balance(user_id, amount):
+    db = get_db()
+    try:
+        cursor = db.cursor()
+        cursor.execute("UPDATE users SET balance = balance + %s WHERE id = %s", (amount, user_id))
+        db.commit()
+    finally:
+        db.close()
+
+
 def register_game_events(socketio):
 
     # ── BLACKJACK ──
@@ -225,6 +235,14 @@ def register_game_events(socketio):
                     _save_game(uid, 'blackjack', room_id, res['total_bet'],
                               'win' if res['total_payout'] > res['total_bet'] else 'lose',
                               res['total_payout'])
+            elif game.phase in ('playing', 'dealer_turn') and game.player_order:
+                # Refund bets for players whose hand was interrupted
+                for uid in game.player_order:
+                    p = game.players.get(uid)
+                    if p:
+                        total_bet = sum(p.get('bets', [0]))
+                        if total_bet > 0:
+                            _credit_balance(uid, total_bet)
             game.reset()
             emit('game_state', game.get_state(), room=room_id)
 
@@ -417,6 +435,14 @@ def register_game_events(socketio):
                 socketio.emit('game_state', game.get_state(for_user=uid), room=sid)
 
     def _broadcast_holdem_state(game, room_id):
+        # Persist holdem results to DB when hand ends
+        if game.phase == 'showdown' and game.results:
+            for uid, res in game.results.items():
+                if not str(uid).startswith('BOT'):
+                    total_bet = game.players.get(uid, {}).get('total_bet', 0)
+                    payout = res.get('payout', 0)
+                    _save_game(uid, 'holdem', room_id, total_bet,
+                               'win' if payout > 0 else 'lose', payout)
         for sid, info in online_users.items():
             if info.get('room_id') == room_id:
                 uid = info.get('user_id')

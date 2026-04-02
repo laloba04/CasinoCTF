@@ -23,7 +23,7 @@ const GAME_COMPONENTS = {
 
 export default function GamePage() {
   const { roomId } = useParams();
-  const { joinRoom, leaveRoom, gameState, emit, connected } = useSocket();
+  const { joinRoom, leaveRoom, gameState, emit, connected, socketError } = useSocket();
   const { user, refreshBalance } = useAuth();
   const { t } = useI18n();
   const [room, setRoom] = useState(null);
@@ -34,7 +34,7 @@ export default function GamePage() {
   useEffect(() => {
     if (connected && !prevConnected.current && room && roomId !== 'slots') {
       const joinEvent = `${room.game_type}_join`;
-      setTimeout(() => emit(joinEvent, { room_id: roomId }), 300);
+      setTimeout(() => emit(joinEvent, { room_id: roomId }), 600);
     }
     prevConnected.current = connected;
   }, [connected]);
@@ -56,7 +56,8 @@ export default function GamePage() {
   }, [roomId, t]);
 
   useEffect(() => {
-    if (gameState?.phase === 'payout' || gameState?.total_win !== undefined) {
+    if (gameState?.phase === 'payout' || gameState?.phase === 'showdown' ||
+        gameState?.total_win !== undefined) {
       refreshBalance();
     }
   }, [gameState?.phase, gameState?.total_win]);
@@ -75,6 +76,16 @@ export default function GamePage() {
 
   return (
     <div className="container" style={{ paddingTop: '1rem', paddingBottom: '2rem' }}>
+      {socketError && (
+        <div style={{
+          position: 'fixed', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+          background: 'var(--accent-red-dim)', color: 'var(--accent-red)',
+          padding: '0.75rem 1.5rem', borderRadius: '8px', zIndex: 1000,
+          border: '1px solid var(--accent-red)', fontWeight: 600, whiteSpace: 'nowrap'
+        }}>
+          ❌ {socketError}
+        </div>
+      )}
       <div className="page-header">
         <div>
           <h1 className="page-title">{room.name}</h1>

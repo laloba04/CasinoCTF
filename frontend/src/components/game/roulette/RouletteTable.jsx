@@ -1,21 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useI18n } from '../../../hooks/useI18n';
+import { sounds } from '../../../utils/sounds';
 
 const RED = new Set([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36]);
 
 export default function RouletteTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(25);
   const [myBets, setMyBets] = useState([]);
+  const [spinning, setSpinning] = useState(false);
   const { t } = useI18n();
   const state = gameState || {};
   const rid = room?.id;
+  const prevNumber = useRef(undefined);
+
+  useEffect(() => {
+    const num = state.number ?? state.result;
+    if (num !== undefined && num !== prevNumber.current) {
+      setSpinning(false);
+      sounds.rouletteStop();
+      const myRes = state.results?.[String(user?.id)];
+      if (myRes) { if (myRes.total_win > 0) sounds.win(); else sounds.lose(); }
+      prevNumber.current = num;
+    }
+  }, [state.number, state.result]);
 
   const placeBet = (type, value) => {
+    sounds.chipBet();
     emit('roulette_bet', { type, value, amount: betAmount, room_id: rid });
     setMyBets(prev => [...prev, { type, value, amount: betAmount }]);
   };
 
   const spinWheel = () => {
+    sounds.rouletteStart();
+    setSpinning(true);
+    prevNumber.current = undefined;
     emit('roulette_spin', { room_id: rid });
     setMyBets([]);
   };
@@ -29,8 +47,10 @@ export default function RouletteTable({ gameState, emit, user, room }) {
       <div className="game-table">
         <div className="flex justify-center items-center gap-3" style={{ flexWrap: 'wrap' }}>
           {/* Wheel */}
-          <div className="roulette-wheel">
-            {resultNumber !== undefined ? (
+          <div className={`roulette-wheel ${spinning ? 'roulette-spinning' : ''}`}>
+            {spinning ? (
+              <span style={{ color: 'var(--text-muted)', fontSize: '1.5rem' }}>🎡</span>
+            ) : resultNumber !== undefined ? (
               <span className={`roulette-number ${resultColor}`}>{resultNumber}</span>
             ) : (
               <span style={{ color: 'var(--text-muted)' }}>?</span>
@@ -86,7 +106,7 @@ export default function RouletteTable({ gameState, emit, user, room }) {
         {state.results && (
           <div className="fade-in text-center" style={{ marginTop: '1.5rem' }}>
             {Object.entries(state.results).map(([uid, res]) => (
-              <div key={uid} style={{
+              <div key={uid} className={`result-pop ${res.total_win > 0 ? 'win-glow' : 'lose-shake'}`} style={{
                 padding: '0.75rem', borderRadius: 'var(--radius-sm)',
                 background: res.total_win > 0 ? 'var(--accent-green-dim)' : 'var(--accent-red-dim)',
                 color: res.total_win > 0 ? 'var(--accent-green)' : 'var(--accent-red)',

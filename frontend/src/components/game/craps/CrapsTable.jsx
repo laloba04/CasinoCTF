@@ -123,7 +123,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
           uid === String(user?.id) && res.details && (
             <div key={uid} className="fade-in text-center" style={{ marginTop: '1rem' }}>
               {res.details.map((d, i) => (
-                <div key={i} style={{
+                <div key={i} className={`result-pop ${d.won ? 'win-glow' : 'lose-shake'}`} style={{
                   padding: '0.5rem', margin: '0.25rem auto', maxWidth: '300px',
                   borderRadius: 'var(--radius-sm)', fontSize: '0.85rem', fontWeight: 600,
                   background: d.won ? 'var(--accent-green-dim)' : 'var(--accent-red-dim)',

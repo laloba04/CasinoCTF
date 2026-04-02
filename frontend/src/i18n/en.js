@@ -207,4 +207,43 @@ export default {
   slotsDesc: 'Spin the reels and hit the jackpot',
   baccaratDesc: 'Player vs Banker, closest to 9 wins',
   crapsDesc: 'Roll the dice and ride your luck',
+
+  // Poker hand names (from backend)
+  'Royal Flush': 'Royal Flush',
+  'Straight Flush': 'Straight Flush',
+  'Four of a Kind': 'Four of a Kind',
+  'Full House': 'Full House',
+  'Flush': 'Flush',
+  'Straight': 'Straight',
+  'Three of a Kind': 'Three of a Kind',
+  'Two Pair': 'Two Pair',
+  'One Pair': 'One Pair',
+  'High Card': 'High Card',
+  'Last standing': 'Last standing',
+
+  // Holdem phase names
+  preflop: 'Pre-Flop',
+  flop: 'Flop',
+  turn_phase: 'Turn',
+  river: 'River',
+  showdown: 'Showdown',
+
+  // Blackjack statuses
+  statusWaiting: 'WAITING',
+  statusReady: 'READY',
+  statusBust: 'BUST',
+  statusStand: 'STAND',
+  statusBlackjack: 'BLACKJACK',
+
+  // Craps result phrases (matched against backend strings)
+  'Win! Pass bets win.': 'Win! Pass bets win.',
+  "Push on Don't Pass.": "Push on Don't Pass.",
+  "Don't Pass wins.": "Don't Pass wins.",
+  'Point set:': 'Point set:',
+  'Hit the point': 'Hit the point',
+  'Pass wins.': 'Pass wins.',
+  'Seven out!': 'Seven out!',
+  'point is still': 'point is still',
+  'Rolled': 'Rolled',
+  'Roll': 'Roll',
 };

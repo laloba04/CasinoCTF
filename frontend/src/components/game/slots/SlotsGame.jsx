@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSocket } from '../../../hooks/useSocket';
 import { useAuth } from '../../../hooks/useAuth';
 import { useI18n } from '../../../hooks/useI18n';
+import { sounds } from '../../../utils/sounds';
 
 export default function SlotsGame() {
   const { emit, gameState } = useSocket();
@@ -11,17 +12,24 @@ export default function SlotsGame() {
   const [lines, setLines] = useState(5);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState(null);
+  const stopSlotSound = useRef(null);
 
   useEffect(() => {
     if (gameState?.reels) {
+      if (stopSlotSound.current) { stopSlotSound.current(); stopSlotSound.current = null; }
       setSpinning(false);
       refreshBalance();
+      const totalBet = (gameState.bet_per_line || 10) * (gameState.lines || 5);
+      if (gameState.total_win > totalBet * 5) sounds.bigWin();
+      else if (gameState.total_win > 0) sounds.slotsWin();
     }
   }, [gameState?.reels]);
 
   const spin = () => {
     setSpinning(true);
     setResult(null);
+    sounds.chipBet();
+    stopSlotSound.current = sounds.slotsSpin();
     emit('slots_spin', { bet_per_line: betPerLine, lines });
   };
 
@@ -40,7 +48,7 @@ export default function SlotsGame() {
           {displayResult?.reels ? displayResult.reels.map((reel, ri) => (
             <div key={ri} className="slots-reel">
               {reel.map((sym, si) => (
-                <div key={si} className={`slots-symbol ${spinning ? 'fade-in' : ''}`}
+                <div key={si} className={`slots-symbol ${spinning ? 'slots-spinning' : ''}`}
                   style={{ animationDelay: `${ri * 0.15}s` }}>
                   {sym}
                 </div>

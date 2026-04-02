@@ -1,9 +1,22 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useI18n } from '../../../hooks/useI18n';
+import { sounds } from '../../../utils/sounds';
 
 export default function CrapsTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(25);
   const { t } = useI18n();
+
+  const translateResult = (str) => {
+    if (!str) return str;
+    const phrases = [
+      'Win! Pass bets win.', "Push on Don't Pass.", "Don't Pass wins.",
+      'Point set:', 'Hit the point', 'Pass wins.', 'Seven out!',
+      'point is still', 'Rolled', 'Roll',
+    ];
+    let out = str;
+    phrases.forEach(p => { out = out.replace(p, t(p) || p); });
+    return out;
+  };
   const state = gameState || {};
   const rid = room?.id;
   const isShooter = !state.shooter || state.shooter === String(user?.id);
@@ -18,10 +31,14 @@ export default function CrapsTable({ gameState, emit, user, room }) {
   ];
 
   const placeBet = (type) => {
+    sounds.chipBet();
     emit('craps_bet', { type, amount: betAmount, room_id: rid });
   };
 
-  const rollDice = () => emit('craps_roll', { room_id: rid });
+  const rollDice = () => {
+    sounds.diceRoll();
+    emit('craps_roll', { room_id: rid });
+  };
 
   return (
     <div>
@@ -60,7 +77,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
               color: state.last_result.includes('Win') ? 'var(--accent-green)'
                 : state.last_result.includes('Lose') ? 'var(--accent-red)' : 'var(--accent-gold)'
             }}>
-              {state.last_result}
+              {translateResult(state.last_result)}
             </div>
           )}
 

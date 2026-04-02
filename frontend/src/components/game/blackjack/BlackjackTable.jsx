@@ -1,10 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PlayingCard from '../shared/Card';
 import { useI18n } from '../../../hooks/useI18n';
+import { sounds } from '../../../utils/sounds';
 
 export default function BlackjackTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(50);
   const { t } = useI18n();
+  const prevPhase = useRef(null);
+  const prevCardCount = useRef(0);
+
+  useEffect(() => {
+    const phase = gameState?.phase;
+    const players = gameState?.players || {};
+    const cardCount = Object.values(players).reduce((s, p) => s + (p.hands?.[0]?.length || 0), 0)
+      + (gameState?.dealer?.hand?.length || 0);
+
+    if (cardCount > prevCardCount.current) sounds.cardDeal();
+    prevCardCount.current = cardCount;
+
+    if (phase !== prevPhase.current) {
+      if (phase === 'payout' && gameState?.results) {
+        const myId = String(user?.id);
+        const res = gameState.results[myId];
+        if (res) {
+          if (res.total_payout > res.total_bet) sounds.win();
+          else if (res.total_payout === res.total_bet) sounds.push();
+          else sounds.lose();
+        }
+      }
+      prevPhase.current = phase;
+    }
+  }, [gameState]);
+
   const state = gameState || {};
   const phase = state.phase || 'betting';
   const myId = String(user?.id);
@@ -12,7 +39,7 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
   const isMyTurn = state.current_player === myId;
   const rid = room?.id;
 
-  const placeBet = () => emit('bj_bet', { amount: betAmount, room_id: rid });
+  const placeBet = () => { sounds.chipBet(); emit('bj_bet', { amount: betAmount, room_id: rid }); };
   const hit = () => emit('bj_hit', { room_id: rid });
   const stand = () => emit('bj_stand', { room_id: rid });
   const doubleDown = () => emit('bj_double', { room_id: rid });
@@ -64,7 +91,7 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
                           : player.status[hi] === 'bust' ? 'var(--accent-red)'
                           : player.status[hi] === 'stand' ? 'var(--accent-green)' : 'var(--text-muted)'
                       }}>
-                        {player.status[hi].toUpperCase()}
+                        {t(`status${player.status[hi].charAt(0).toUpperCase()}${player.status[hi].slice(1)}`) || player.status[hi].toUpperCase()}
                       </span>
                     )}
                   </div>
@@ -78,7 +105,7 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
         {phase === 'payout' && state.results && (
           <div className="fade-in text-center" style={{ marginTop: '1.5rem' }}>
             {Object.entries(state.results).map(([uid, res]) => (
-              <div key={uid} style={{
+              <div key={uid} className={`result-pop ${res.total_payout > res.total_bet ? 'win-glow' : 'lose-shake'}`} style={{
                 padding: '0.75rem', borderRadius: 'var(--radius-sm)', margin: '0.5rem auto',
                 maxWidth: '300px',
                 background: res.total_payout > res.total_bet ? 'var(--accent-green-dim)' : 'var(--accent-red-dim)',

@@ -10,7 +10,7 @@ export default function PlayingCard({ card }) {
   const suitClass = card.suit === 'hearts' || card.suit === 'diamonds' ? 'suit-hearts' : 'suit-clubs';
 
   return (
-    <div className={`playing-card ${suitClass}`}>
+    <div className={`playing-card ${suitClass} card-deal`}>
       <span className="card-rank">{card.rank}</span>
       <span className="card-suit">{card.symbol}</span>
     </div>

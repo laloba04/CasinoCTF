@@ -1,10 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PlayingCard from '../shared/Card';
 import { useI18n } from '../../../hooks/useI18n';
+import { sounds } from '../../../utils/sounds';
 
 export default function HoldemTable({ gameState, emit, user, room }) {
   const [raiseAmount, setRaiseAmount] = useState(50);
   const { t } = useI18n();
+  const prevPhase = useRef(null);
+
+  useEffect(() => {
+    const phase = gameState?.phase;
+    if (phase === prevPhase.current) return;
+    if (phase === 'preflop') sounds.cardDeal();
+    if (phase === 'flop' || phase === 'turn' || phase === 'river') sounds.cardDeal();
+    if (phase === 'showdown' && gameState?.results) {
+      const myId = String(user?.id);
+      const res = gameState.results[myId];
+      if (res?.winner) sounds.win(); else if (res) sounds.lose();
+    }
+    prevPhase.current = phase;
+  }, [gameState?.phase]);
   const state = gameState || {};
   const phase = state.phase || 'waiting';
   const myId = String(user?.id);
@@ -19,7 +34,10 @@ export default function HoldemTable({ gameState, emit, user, room }) {
   const raise = () => emit('holdem_action', { action: 'raise', amount: raiseAmount, room_id: rid });
   const allIn = () => emit('holdem_action', { action: 'all_in', room_id: rid });
 
-  const PHASE_NAMES = { preflop: 'Pre-Flop', flop: 'Flop', turn: 'Turn', river: 'River', showdown: 'Showdown' };
+  const PHASE_NAMES = {
+    preflop: t('preflop'), flop: t('flop'), turn: t('turn_phase'),
+    river: t('river'), showdown: t('showdown')
+  };
 
   return (
     <div>
@@ -90,7 +108,7 @@ export default function HoldemTable({ gameState, emit, user, room }) {
             {Object.entries(state.results).map(([uid, res]) => {
               const username = state.players?.[uid]?.username || uid;
               return (
-                <div key={uid} style={{
+                <div key={uid} className={`result-pop ${res.winner ? 'win-glow' : ''}`} style={{
                   padding: '0.75rem', borderRadius: 'var(--radius-sm)', margin: '0.5rem auto',
                   maxWidth: '350px',
                   background: res.winner ? 'var(--accent-green-dim)' : 'rgba(0,0,0,0.3)',
@@ -98,7 +116,7 @@ export default function HoldemTable({ gameState, emit, user, room }) {
                   fontWeight: 700
                 }}>
                   {res.winner ? '🏆' : '🃏'} {username === 'House Dealer' ? t('houseDealer') : username}
-                  {res.winner ? ` ${t('wins')} $${res.payout}` : ''} {res.hand ? `— ${res.hand}` : ''}
+                  {res.winner ? ` ${t('wins')} $${res.payout}` : ''} {res.hand ? `— ${t(res.hand) || res.hand}` : ''}
                 </div>
               );
             })}

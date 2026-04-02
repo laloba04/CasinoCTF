@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PlayingCard from '../shared/Card';
 import { useI18n } from '../../../hooks/useI18n';
+import { sounds } from '../../../utils/sounds';
 
 export default function BaccaratTable({ gameState, emit, user, room }) {
   const [betAmount, setBetAmount] = useState(50);
@@ -9,9 +10,22 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
   const state = gameState || {};
   const phase = state.phase || 'betting';
   const rid = room?.id;
+  const prevPhase = useRef(null);
+
+  useEffect(() => {
+    if (phase === prevPhase.current) return;
+    if (phase === 'dealing') sounds.cardDeal();
+    if (phase === 'payout' && state.result) {
+      const myId = String(user?.id);
+      const res = state.results?.[myId];
+      if (res?.payout > 0) sounds.win(); else sounds.lose();
+    }
+    prevPhase.current = phase;
+  }, [phase]);
 
   const placeBet = () => {
     if (!betSide) return;
+    sounds.chipBet();
     emit('baccarat_bet', { side: betSide, amount: betAmount, room_id: rid });
   };
 

@@ -207,4 +207,43 @@ export default {
   slotsDesc: 'Gira los carretes y gana el jackpot',
   baccaratDesc: 'Jugador vs Banca, el más cercano a 9 gana',
   crapsDesc: 'Tira los dados y prueba tu suerte',
+
+  // Poker hand names (from backend)
+  'Royal Flush': 'Escalera Real',
+  'Straight Flush': 'Escalera de Color',
+  'Four of a Kind': 'Póker',
+  'Full House': 'Full',
+  'Flush': 'Color',
+  'Straight': 'Escalera',
+  'Three of a Kind': 'Trío',
+  'Two Pair': 'Doble Pareja',
+  'One Pair': 'Pareja',
+  'High Card': 'Carta Alta',
+  'Last standing': 'Último en pie',
+
+  // Holdem phase names
+  preflop: 'Pre-Flop',
+  flop: 'Flop',
+  turn_phase: 'Turn',
+  river: 'River',
+  showdown: 'Showdown',
+
+  // Blackjack statuses
+  statusWaiting: 'ESPERANDO',
+  statusReady: 'LISTO',
+  statusBust: 'PASADO',
+  statusStand: 'PLANTADO',
+  statusBlackjack: 'BLACKJACK',
+
+  // Craps result phrases (matched against backend strings)
+  'Win! Pass bets win.': '¡Gana! Pass Line gana.',
+  "Push on Don't Pass.": "Empate en Don't Pass.",
+  "Don't Pass wins.": "Don't Pass gana.",
+  'Point set:': 'Punto establecido:',
+  'Hit the point': '¡Punto conseguido',
+  'Pass wins.': 'Pass Line gana.',
+  'Seven out!': '¡Siete! Pierden los Pass.',
+  'point is still': 'el punto sigue siendo',
+  'Rolled': 'Tirada',
+  'Roll': 'Tirada',
 };

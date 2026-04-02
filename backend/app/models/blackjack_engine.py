@@ -42,7 +42,9 @@ class BlackjackGame:
         return {'success': True}
 
     def can_start(self):
-        return any(p['status'][0] == 'ready' for p in self.players.values())
+        if not self.players:
+            return False
+        return all(p['status'][0] == 'ready' for p in self.players.values())
 
     def deal(self):
         if not self.can_start():

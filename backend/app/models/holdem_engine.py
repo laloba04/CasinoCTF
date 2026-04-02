@@ -31,7 +31,10 @@ class HoldemGame:
             'username': username, 'chips': buy_in, 'hole_cards': [],
             'current_bet': 0, 'total_bet': 0, 'folded': False, 'all_in': False
         }
-        self.seat_order.append(uid)
+        # Only join current seat_order if no hand is in progress
+        if self.phase in ['waiting', 'showdown']:
+            self.seat_order.append(uid)
+        # else: picked up on next start_hand
         return True
 
     def remove_player(self, uid):
@@ -40,6 +43,10 @@ class HoldemGame:
             self.seat_order.remove(uid)
 
     def start_hand(self):
+        # Pick up any players who joined while a hand was in progress
+        for uid in list(self.players):
+            if uid not in self.seat_order and uid != 'BOT_HOUSE':
+                self.seat_order.append(uid)
         active = [uid for uid in self.seat_order if uid in self.players]
         # Auto-add house bot for solo play
         if len(active) == 1:

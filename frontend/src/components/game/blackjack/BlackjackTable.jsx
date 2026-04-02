@@ -132,7 +132,12 @@ export default function BlackjackTable({ gameState, emit, user, room }) {
         )}
 
         {phase === 'playing' && !isMyTurn && (
-          <p className="text-muted">⏳ {t('waitingFor')} {state.players?.[state.current_player]?.username}{t('turn')}</p>
+          <div className="flex items-center gap-2" style={{ flexWrap: 'wrap' }}>
+            <p className="text-muted">⏳ {t('waitingFor')} {state.players?.[state.current_player]?.username}{t('turn')}</p>
+            <button className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.3rem 0.75rem' }} onClick={newRound}>
+              🔄 {t('newRound')}
+            </button>
+          </div>
         )}
 
         {phase === 'payout' && (

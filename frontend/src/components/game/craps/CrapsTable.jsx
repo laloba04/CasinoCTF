@@ -34,7 +34,7 @@ export default function CrapsTable({ gameState, emit, user, room }) {
 
           {/* Dice display */}
           <div className="flex justify-center gap-2" style={{ marginBottom: '1rem' }}>
-            {state.dice ? (
+            {state.dice?.[0] > 0 ? (
               <>
                 <div className="dice">{state.dice[0]}</div>
                 <div className="dice">{state.dice[1]}</div>

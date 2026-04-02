@@ -118,7 +118,10 @@ export default function BaccaratTable({ gameState, emit, user, room }) {
 
         {state.result && (
           <div className="text-center mt-2">
-            <button className="btn btn-primary" onClick={() => emit('baccarat_join', { room_id: rid })}>
+            <button className="btn btn-primary" onClick={() => {
+              setBetSide(null);
+              emit('baccarat_join', { room_id: rid });
+            }}>
               🔄 {t('newRound')}
             </button>
           </div>

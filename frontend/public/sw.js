@@ -31,8 +31,9 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Skip non-GET and API/socket requests
+  // Skip non-GET, non-HTTP, and API/socket requests
   if (event.request.method !== 'GET') return;
+  if (!event.request.url.startsWith('http')) return;
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/socket.io')) return;
 
   event.respondWith(

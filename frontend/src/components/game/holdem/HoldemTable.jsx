@@ -120,7 +120,10 @@ export default function HoldemTable({ gameState, emit, user, room }) {
         {(['preflop', 'flop', 'turn', 'river'].includes(phase)) && isMyTurn && (
           <div className="flex gap-1 items-center" style={{ flexWrap: 'wrap' }}>
             <button className="btn btn-danger" onClick={fold}>🚫 {t('fold')}</button>
-            <button className="btn btn-outline" onClick={check}>✓ {t('check')}</button>
+            <button className="btn btn-outline" onClick={check}
+              disabled={state.current_bet > (myPlayer?.current_bet || 0)}>
+              ✓ {t('check')}
+            </button>
             <button className="btn btn-green" onClick={call}>
               📞 {t('call')} {state.current_bet > (myPlayer?.current_bet || 0)
                 ? `$${state.current_bet - (myPlayer?.current_bet || 0)}` : ''}

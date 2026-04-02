@@ -105,6 +105,9 @@ def register_game_events(socketio):
         uid = user.get('user_id')
         username = user.get('username', 'Anonymous')
         if uid:
+            # If joining during payout and this player wasn't part of the hand, reset
+            if game.phase == 'payout' and str(uid) not in [str(u) for u in (game.player_order or [])]:
+                game.reset()
             game.add_player(uid, username)
         emit('game_state', game.get_state(for_user=uid), room=room_id)
 

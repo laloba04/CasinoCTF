@@ -65,6 +65,7 @@ export default {
   comingSoon: 'próximamente!',
   table: 'mesa',
   roomTitle: 'Sala',
+  players: 'jugadores',
 
   // Games
   dealer: 'DEALER',

@@ -147,7 +147,7 @@ export default function ProfilePage() {
               <div style={{ position: 'relative' }}>
                 <input
                   type={pwShow[key] ? 'text' : 'password'}
-                  className="form-input"
+                  className="input"
                   value={pwForm[key]}
                   onChange={e => setPwForm(f => ({ ...f, [key]: e.target.value }))}
                   style={{ paddingRight: '2.5rem', width: '100%', boxSizing: 'border-box' }}

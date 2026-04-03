@@ -54,7 +54,7 @@ export default function HomePage() {
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{game.icon}</div>
               <h3 style={{ fontFamily: 'Outfit', fontWeight: 700, marginBottom: '0.3rem' }}>{game.name}</h3>
               <p className="text-muted" style={{ fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '0.5rem' }}>{game.desc}</p>
-              <span style={{ fontSize: '0.75rem', color: 'var(--accent-purple)' }}>👥 {game.players} players</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--accent-purple)' }}>👥 {game.players} {t('players')}</span>
             </div>
           ))}
         </div>

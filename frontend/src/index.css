@@ -51,7 +51,7 @@ button { cursor: pointer; font-family: inherit; }
 input, select { font-family: inherit; }
 
 /* ── Utility ── */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
 .text-center { text-align: center; }
 .text-gold { color: var(--accent-gold); }
 .text-green { color: var(--accent-green); }
@@ -382,6 +382,15 @@ input, select { font-family: inherit; }
 .history-game { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
 .history-game > div > div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .history-meta { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+
+.profile-layout {
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+@media (min-width: 800px) {
+  .profile-layout { flex-direction: row; align-items: flex-start; }
+  .profile-sidebar { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 1.5rem; }
+  .profile-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1.5rem; }
+}
 
 /* ── CTF Panel ── */
 .ctf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.25rem; }

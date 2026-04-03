@@ -317,7 +317,7 @@ input, select { font-family: inherit; }
 
 /* ── Admin table (desktop) ── */
 .admin-desktop { display: block; }
-.admin-mobile  { display: none; }
+.admin-mobile  { display: none; flex-direction: column; gap: 0.6rem; }
 @media (max-width: 700px) {
   .admin-desktop { display: none; }
   .admin-mobile  { display: flex; }

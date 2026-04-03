@@ -160,7 +160,7 @@ export default function AdminPage() {
           </div>
 
           {/* ── MOBILE: card layout ── */}
-          <div className="admin-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <div className="admin-mobile">
             {users.map(u => (
               <div key={u.id} className="card" style={{
                 padding: '0.85rem 1rem',

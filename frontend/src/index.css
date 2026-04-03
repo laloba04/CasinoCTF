@@ -77,12 +77,12 @@ input, select { font-family: inherit; }
   position: sticky; top: 0; z-index: 100;
 }
 .navbar-inner {
-  max-width: 1200px; margin: 0 auto;
+  max-width: 1200px; margin: 0 auto; width: 100%;
   display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 1rem;
+  gap: 1rem;
 }
 .navbar-header {
-  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
 }
 .navbar-brand {
   font-family: 'Outfit', sans-serif;
@@ -94,7 +94,11 @@ input, select { font-family: inherit; }
   display: flex; align-items: center; gap: 0.5rem;
 }
 .navbar-brand span { font-size: 1.8rem; }
-.navbar-links { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; justify-content: center; }
+.navbar-links { 
+  display: flex; gap: 0.5rem; align-items: center; 
+  flex-wrap: nowrap; justify-content: flex-end; 
+  flex: 1;
+}
 .navbar-links a, .navbar-links button {
   padding: 0.5rem 1rem; border-radius: var(--radius-sm);
   color: var(--text-secondary); font-size: 0.875rem; font-weight: 500;
@@ -114,19 +118,17 @@ input, select { font-family: inherit; }
 }
 .mobile-menu-btn, .mobile-balance { display: none; }
 .desktop-balance { display: block; }
-.online-status { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; padding: 0 0.5rem; }
+.online-status { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; padding: 0 0.5rem; white-space: nowrap; }
 .lang-btn { min-width: 36px; padding: 0.4rem 0.6rem !important; font-size: 0.8rem !important; }
-.navbar-mobile-controls { display: flex; align-items: center; gap: 1rem; }
-
-@media (min-width: 769px) {
-  .navbar-header { width: auto; }
-}
+.navbar-mobile-controls { display: none; }
 
 @media (max-width: 768px) {
   .navbar-inner { flex-direction: column; align-items: stretch; gap: 0; }
+  .navbar-header { width: 100%; }
+  .navbar-mobile-controls { display: flex; align-items: center; gap: 1rem; }
   .mobile-menu-btn {
     display: block; background: transparent; border: none; font-size: 1.5rem;
-    color: var(--text-primary); padding: 0.2rem; line-height: 1;
+    color: var(--text-primary); padding: 0.2rem; line-height: 1; cursor: pointer;
   }
   .mobile-balance { display: block; font-size: 0.75rem; padding: 0.35rem 0.7rem; }
   .desktop-balance { display: none; }

@@ -14,15 +14,20 @@ const RESULT_STYLE = {
   lose:      { bg: 'var(--accent-red-dim)',   color: 'var(--accent-red)'   },
 };
 
+const GAME_TYPES = ['blackjack', 'holdem', 'roulette', 'slots', 'baccarat', 'craps'];
+
 export default function HistoryPage() {
   const { t } = useI18n();
   const [games, setGames] = useState([]);
   const [stats, setStats] = useState([]);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     api.getHistory(50).then(d => setGames(d.games || [])).catch(console.error);
     api.getStats().then(d => setStats(d.stats || [])).catch(console.error);
   }, []);
+
+  const filtered = filter === 'all' ? games : games.filter(g => g.game_type === filter);
 
   return (
     <div className="container" style={{ paddingTop: '1rem', paddingBottom: '2rem' }}>
@@ -36,8 +41,18 @@ export default function HistoryPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
           {stats.map((s, i) => {
             const net = (s.total_payout || 0) - (s.total_bet || 0);
+            const active = filter === s.game_type;
             return (
-              <div key={s.game_type} className="card text-center fade-in" style={{ animationDelay: `${i * 0.1}s`, padding: '1rem' }}>
+              <div
+                key={s.game_type}
+                className="card text-center fade-in"
+                onClick={() => setFilter(active ? 'all' : s.game_type)}
+                style={{
+                  animationDelay: `${i * 0.1}s`, padding: '1rem', cursor: 'pointer',
+                  outline: active ? '2px solid var(--accent-purple)' : 'none',
+                  transition: 'outline 0.15s'
+                }}
+              >
                 <div style={{ fontSize: '1.8rem' }}>{GAME_ICONS[s.game_type] || '🎲'}</div>
                 <div style={{ fontWeight: 700, textTransform: 'capitalize', fontSize: '0.9rem', margin: '0.25rem 0' }}>{t(s.game_type)}</div>
                 <div className="text-muted" style={{ fontSize: '0.75rem' }}>{s.played} {t('gamesPlayed').toLowerCase()}</div>
@@ -50,10 +65,31 @@ export default function HistoryPage() {
         </div>
       )}
 
+      {/* Filter bar */}
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+        <button
+          className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-ghost'}`}
+          style={{ fontSize: '0.8rem', padding: '0.35rem 0.9rem' }}
+          onClick={() => setFilter('all')}
+        >
+          {t('all')}
+        </button>
+        {GAME_TYPES.filter(gt => games.some(g => g.game_type === gt)).map(gt => (
+          <button
+            key={gt}
+            className={`btn ${filter === gt ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ fontSize: '0.8rem', padding: '0.35rem 0.9rem' }}
+            onClick={() => setFilter(filter === gt ? 'all' : gt)}
+          >
+            {GAME_ICONS[gt]} {t(gt)}
+          </button>
+        ))}
+      </div>
+
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        {games.length === 0 ? (
+        {filtered.length === 0 ? (
           <p className="text-muted text-center" style={{ padding: '3rem' }}>{t('noGamesYet')}</p>
-        ) : games.map(g => {
+        ) : filtered.map(g => {
           const rs = RESULT_STYLE[g.result] || RESULT_STYLE.lose;
           const label = t(g.result) ? t(g.result).toUpperCase() : g.result?.toUpperCase();
           return (

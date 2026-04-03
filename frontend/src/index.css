@@ -139,12 +139,13 @@ input, select { font-family: inherit; }
 }
 .btn-outline:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
 .btn-danger-outline {
-  background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red);
-  padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600;
-  cursor: pointer; transition: background 0.15s, color 0.15s;
+  background: rgba(239,68,68,0.08); border: 1.5px solid var(--accent-red); color: var(--accent-red);
+  padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.78rem; font-weight: 700;
+  cursor: pointer; transition: background 0.15s, color 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
 }
-.btn-danger-outline:hover:not(:disabled) { background: var(--accent-red); color: #fff; }
-.btn-danger-outline:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn-danger-outline:hover:not(:disabled) { background: var(--accent-red); color: #fff; transform: scale(1.03); }
+.btn-danger-outline:disabled { opacity: 0.25; cursor: not-allowed; }
 .btn-sm { padding: 0.4rem 1rem; font-size: 0.8rem; }
 .btn-lg { padding: 0.8rem 2rem; font-size: 1.05rem; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
@@ -314,7 +315,13 @@ input, select { font-family: inherit; }
   .sb-col { min-width: 80px; }
 }
 
-/* ── Admin table ── */
+/* ── Admin table (desktop) ── */
+.admin-desktop { display: block; }
+.admin-mobile  { display: none; }
+@media (max-width: 700px) {
+  .admin-desktop { display: none; }
+  .admin-mobile  { display: flex; }
+}
 .admin-tbl-header {
   display: flex; align-items: center; gap: 0.75rem;
   padding: 0.55rem 1.25rem;
@@ -336,15 +343,6 @@ input, select { font-family: inherit; }
 .admin-col-stats { width: 130px; flex-shrink: 0; text-align: right; font-size: 0.78rem; }
 .admin-col-role  { width: 90px; flex-shrink: 0; text-align: center; }
 .admin-col-act   { width: 100px; flex-shrink: 0; text-align: right; }
-@media (max-width: 700px) {
-  .admin-hide-sm { display: none !important; }
-  .admin-tbl-header { display: none; }
-  .admin-tbl-row { flex-wrap: wrap; gap: 0.4rem; padding: 0.75rem 1rem; }
-  .admin-col-user { width: 100%; flex: none; }
-  .admin-col-bal  { flex: 1; width: auto; }
-  .admin-col-role { width: auto; }
-  .admin-col-act  { width: auto; }
-}
 
 /* ── History / Profile rows ── */
 .history-row {

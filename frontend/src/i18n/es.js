@@ -196,6 +196,16 @@ export default {
   payout: 'Premio',
   date: 'Fecha',
 
+  // Admin
+  adminPanel: 'Admin',
+  adminRole: 'Rol',
+  adminActions: 'Acciones',
+  adminBalanceUpdated: 'Saldo actualizado',
+  adminUserDeleted: 'Usuario eliminado',
+  adminDeleteConfirm: 'Eliminar usuario',
+  adminCantDeleteAdmin: 'No se pueden eliminar administradores',
+  delete: 'Eliminar',
+
   // History
   gameHistory: 'Historial de Partidas',
 

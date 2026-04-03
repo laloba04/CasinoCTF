@@ -196,6 +196,16 @@ export default {
   payout: 'Payout',
   date: 'Date',
 
+  // Admin
+  adminPanel: 'Admin',
+  adminRole: 'Role',
+  adminActions: 'Actions',
+  adminBalanceUpdated: 'Balance updated',
+  adminUserDeleted: 'User deleted',
+  adminDeleteConfirm: 'Delete user',
+  adminCantDeleteAdmin: 'Cannot delete admin users',
+  delete: 'Delete',
+
   // History
   gameHistory: 'Game History',
 

@@ -27,6 +27,7 @@ export default function Navbar() {
               <Link to="/tutorials" className={isActive('/tutorials')}>📖 <span className="hide-mobile">{t('tutorials')}</span></Link>
               <Link to="/history" className={isActive('/history')}>📊 <span className="hide-mobile">{t('history')}</span></Link>
               <Link to="/profile" className={isActive('/profile')}>👤 {t('profile')}</Link>
+              {user.is_admin && <Link to="/admin" className={isActive('/admin')}>🛡️ {t('adminPanel')}</Link>}
               <div className="balance-badge">💰 ${user.balance?.toLocaleString('en-US', { minimumFractionDigits: 0 })}</div>
               <span style={{ color: connected ? 'var(--accent-green)' : 'var(--accent-red)', fontSize: '0.7rem' }}>
                 {connected ? `● ${t('online')}` : `● ${t('offline')}`}

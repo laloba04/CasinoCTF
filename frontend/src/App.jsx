@@ -12,12 +12,21 @@ import CTFPage from './pages/CTFPage';
 import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import TutorialsPage from './pages/TutorialsPage';
+import AdminPage from './pages/AdminPage';
 import './index.css';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="text-center" style={{ padding: '4rem' }}>⏳</div>;
   return user ? children : <Navigate to="/auth" />;
+}
+
+function AdminRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="text-center" style={{ padding: '4rem' }}>⏳</div>;
+  if (!user) return <Navigate to="/auth" />;
+  if (!user.is_admin) return <Navigate to="/lobby" />;
+  return children;
 }
 
 function AuthRoute() {
@@ -39,6 +48,7 @@ function AppRoutes() {
         <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/tutorials" element={<ProtectedRoute><TutorialsPage /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
       </Routes>
     </SocketProvider>
   );

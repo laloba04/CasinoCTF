@@ -32,6 +32,13 @@ export const api = {
     apiFetch('/api/scoreboard/update', { method: 'POST', body: JSON.stringify({ display_name }) }),
   changePassword: (current_password, new_password) =>
     apiFetch('/api/auth/change-password', { method: 'POST', body: JSON.stringify({ current_password, new_password }) }),
+  adminGetUsers: () => apiFetch('/api/admin/users'),
+  adminSetBalance: (id, balance) =>
+    apiFetch(`/api/admin/users/${id}/balance`, { method: 'PUT', body: JSON.stringify({ balance }) }),
+  adminToggleAdmin: (id) =>
+    apiFetch(`/api/admin/users/${id}/toggle-admin`, { method: 'PUT' }),
+  adminDeleteUser: (id) =>
+    apiFetch(`/api/admin/users/${id}`, { method: 'DELETE' }),
   getChallenges: () => apiFetch('/api/ctf/challenges'),
   submitFlag: (challenge_id, flag) =>
     apiFetch('/api/ctf/submit', { method: 'POST', body: JSON.stringify({ challenge_id, flag }) }),

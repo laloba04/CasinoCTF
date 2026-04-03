@@ -19,12 +19,14 @@ def create_app():
     from app.routes.lobby import lobby_bp
     from app.routes.scoreboard import scoreboard_bp
     from app.routes.ctf import ctf_bp
+    from app.routes.admin import admin_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(game_bp)
     app.register_blueprint(lobby_bp)
     app.register_blueprint(scoreboard_bp)
     app.register_blueprint(ctf_bp)
+    app.register_blueprint(admin_bp)
 
     # Initialize SocketIO
     socketio.init_app(app, cors_allowed_origins=Config.CORS_ORIGINS, async_mode='eventlet')

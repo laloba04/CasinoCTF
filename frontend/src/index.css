@@ -338,8 +338,12 @@ input, select { font-family: inherit; }
 .admin-col-act   { width: 100px; flex-shrink: 0; text-align: right; }
 @media (max-width: 700px) {
   .admin-hide-sm { display: none !important; }
-  .admin-col-bal { width: 115px; }
-  .admin-col-act { width: 80px; }
+  .admin-tbl-header { display: none; }
+  .admin-tbl-row { flex-wrap: wrap; gap: 0.4rem; padding: 0.75rem 1rem; }
+  .admin-col-user { width: 100%; flex: none; }
+  .admin-col-bal  { flex: 1; width: auto; }
+  .admin-col-role { width: auto; }
+  .admin-col-act  { width: auto; }
 }
 
 /* ── History / Profile rows ── */

@@ -70,9 +70,17 @@ def delete_user(user_id):
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("DELETE FROM users WHERE id = %s AND is_admin = FALSE RETURNING id", (user_id,))
-        if not cursor.fetchone():
-            return jsonify({'error': 'User not found or is admin'}), 404
+        cursor.execute("SELECT id, is_admin FROM users WHERE id = %s", (user_id,))
+        row = cursor.fetchone()
+        if not row:
+            return jsonify({'error': 'User not found'}), 404
+        if row['is_admin'] if isinstance(row, dict) else row[1]:
+            return jsonify({'error': 'Cannot delete admin users'}), 400
+        cursor.execute("DELETE FROM ctf_submissions WHERE user_id = %s", (user_id,))
+        cursor.execute("DELETE FROM games WHERE user_id = %s", (user_id,))
+        cursor.execute("UPDATE rooms SET created_by = NULL WHERE created_by = %s", (user_id,))
+        cursor.execute("DELETE FROM scoreboard WHERE user_id = %s", (user_id,))
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
         db.commit()
         return jsonify({'message': 'User deleted'})
     finally:

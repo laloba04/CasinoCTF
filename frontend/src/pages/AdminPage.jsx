@@ -79,77 +79,87 @@ export default function AdminPage() {
       {loading ? (
         <p className="text-muted text-center" style={{ padding: '3rem' }}>⏳ {t('loading')}</p>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '0.75rem' }}>
+        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+          {/* Header */}
+          <div className="admin-tbl-header">
+            <span className="admin-col-user">User</span>
+            <span className="admin-col-bal">Balance</span>
+            <span className="admin-col-stats admin-hide-sm">Stats</span>
+            <span className="admin-col-role">Role</span>
+            <span className="admin-col-act">Actions</span>
+          </div>
+
           {users.map(u => (
-            <div key={u.id} className="card fade-in" style={{
-              padding: '1rem 1.25rem',
-              opacity: isSelf(u) ? 0.75 : 1,
-              borderLeft: `3px solid ${u.is_admin ? 'var(--accent-purple)' : 'var(--border)'}`
-            }}>
-              {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span style={{ fontWeight: 700 }}>{u.username}</span>
-                  {isSelf(u) && <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', background: 'var(--surface-2)', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>{t('you')}</span>}
-                  {u.display_name !== u.username && <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>· {u.display_name}</span>}
-                </div>
-                <span style={{
-                  fontSize: '0.7rem', fontWeight: 700, padding: '0.2rem 0.55rem', borderRadius: '12px',
-                  background: u.is_admin ? 'rgba(168,85,247,0.15)' : 'var(--surface-2)',
-                  color: u.is_admin ? 'var(--accent-purple)' : 'var(--text-muted)'
-                }}>
-                  {u.is_admin ? '🛡️ Admin' : '👤 User'}
-                </span>
+            <div key={u.id} className="admin-tbl-row" style={{ opacity: isSelf(u) ? 0.75 : 1 }}>
+              {/* User */}
+              <div className="admin-col-user">
+                <span style={{ fontWeight: 700, whiteSpace: 'nowrap' }}>{u.username}</span>
+                {isSelf(u) && (
+                  <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', background: 'var(--surface-2)', padding: '0.1rem 0.35rem', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                    {t('you')}
+                  </span>
+                )}
+                {u.display_name !== u.username && (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>· {u.display_name}</span>
+                )}
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>#{u.id}</span>
               </div>
 
-              {/* Stats */}
-              <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '0.75rem', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                <span>#{u.id}</span>
-                <span>{u.games_played} {t('gamesPlayed').toLowerCase()}</span>
-                <span style={{ color: u.total_winnings >= 0 ? 'var(--accent-green)' : 'var(--accent-red)', fontWeight: 600 }}>
-                  {u.total_winnings >= 0 ? '+' : ''}${(u.total_winnings || 0).toFixed(0)}
-                </span>
-              </div>
-
-              {/* Actions */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {/* Balance */}
+              <div className="admin-col-bal">
                 <input
                   type="number"
                   value={editBalances[u.id] ?? u.balance}
                   onChange={e => setEditBalances(b => ({ ...b, [u.id]: e.target.value }))}
-                  style={{ width: '95px', padding: '0.28rem 0.5rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: '0.85rem' }}
+                  style={{ width: '80px', padding: '0.25rem 0.4rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: '0.82rem' }}
                   min="0"
                 />
                 {editBalances[u.id] !== undefined && (
-                  <button className="btn btn-sm btn-primary" style={{ padding: '0.28rem 0.65rem', fontSize: '0.78rem' }} onClick={() => handleSetBalance(u)}>✓</button>
+                  <button
+                    className="btn btn-sm btn-primary"
+                    style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+                    onClick={() => handleSetBalance(u)}
+                  >✓</button>
                 )}
+              </div>
 
-                <div style={{ flex: 1 }} />
+              {/* Stats */}
+              <div className="admin-col-stats admin-hide-sm">
+                <span style={{ color: 'var(--text-muted)' }}>{u.games_played} {t('gamesPlayed').toLowerCase()}</span>
+                <span style={{ fontWeight: 600, color: u.total_winnings >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+                  {u.total_winnings >= 0 ? '+' : ''}${(u.total_winnings || 0).toFixed(0)}
+                </span>
+              </div>
 
+              {/* Role */}
+              <div className="admin-col-role">
                 <button
                   className={`btn btn-sm ${u.is_admin ? 'btn-primary' : 'btn-outline'}`}
-                  style={{ fontSize: '0.75rem', padding: '0.28rem 0.65rem' }}
+                  style={{ fontSize: '0.72rem', padding: '0.22rem 0.5rem', width: '100%' }}
                   onClick={() => handleToggleAdmin(u)}
                   disabled={isSelf(u)}
                 >
                   {u.is_admin ? '🛡️ Admin' : '👤 User'}
                 </button>
+              </div>
 
+              {/* Actions */}
+              <div className="admin-col-act" style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {confirmId === u.id ? (
-                  <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-red)', fontWeight: 600 }}>¿Seguro?</span>
+                  <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
                     <button
                       onClick={() => handleDelete(u)}
-                      style={{ fontSize: '0.75rem', padding: '0.25rem 0.55rem', borderRadius: '6px', border: 'none', background: 'var(--accent-red)', color: '#fff', cursor: 'pointer', fontWeight: 700 }}
+                      style={{ fontSize: '0.72rem', padding: '0.22rem 0.45rem', borderRadius: '5px', border: 'none', background: 'var(--accent-red)', color: '#fff', cursor: 'pointer', fontWeight: 700 }}
                     >Sí</button>
                     <button
                       onClick={() => setConfirmId(null)}
-                      style={{ fontSize: '0.75rem', padding: '0.25rem 0.55rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}
+                      style={{ fontSize: '0.72rem', padding: '0.22rem 0.45rem', borderRadius: '5px', border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}
                     >No</button>
                   </div>
                 ) : (
                   <button
                     className="btn-danger-outline"
+                    style={{ padding: '0.22rem 0.55rem', fontSize: '0.72rem' }}
                     onClick={() => setConfirmId(u.id)}
                     disabled={isSelf(u) || u.is_admin}
                     title={u.is_admin ? t('adminCantDeleteAdmin') : ''}

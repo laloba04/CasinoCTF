@@ -314,6 +314,34 @@ input, select { font-family: inherit; }
   .sb-col { min-width: 80px; }
 }
 
+/* ── Admin table ── */
+.admin-tbl-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.55rem 1.25rem;
+  background: var(--bg-secondary);
+  font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border);
+}
+.admin-tbl-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.admin-tbl-row:last-child { border-bottom: none; }
+.admin-tbl-row:hover { background: var(--bg-card-hover); }
+.admin-col-user  { flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; overflow: hidden; }
+.admin-col-bal   { width: 140px; flex-shrink: 0; display: flex; align-items: center; gap: 0.3rem; }
+.admin-col-stats { width: 130px; flex-shrink: 0; text-align: right; font-size: 0.78rem; }
+.admin-col-role  { width: 90px; flex-shrink: 0; text-align: center; }
+.admin-col-act   { width: 100px; flex-shrink: 0; text-align: right; }
+@media (max-width: 700px) {
+  .admin-hide-sm { display: none !important; }
+  .admin-col-bal { width: 115px; }
+  .admin-col-act { width: 80px; }
+}
+
 /* ── History / Profile rows ── */
 .history-row {
   display: flex; align-items: center; justify-content: space-between;

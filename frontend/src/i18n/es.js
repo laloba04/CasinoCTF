@@ -204,6 +204,7 @@ export default {
   adminUserDeleted: 'Usuario eliminado',
   adminDeleteConfirm: 'Eliminar usuario',
   adminCantDeleteAdmin: 'No se pueden eliminar administradores',
+  adminUsersTotal: 'usuarios',
   delete: 'Eliminar',
 
   // History

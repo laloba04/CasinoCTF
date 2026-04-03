@@ -204,6 +204,7 @@ export default {
   adminUserDeleted: 'User deleted',
   adminDeleteConfirm: 'Delete user',
   adminCantDeleteAdmin: 'Cannot delete admin users',
+  adminUsersTotal: 'users',
   delete: 'Delete',
 
   // History

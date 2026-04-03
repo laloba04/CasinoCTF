@@ -138,6 +138,13 @@ input, select { font-family: inherit; }
   color: var(--text-secondary);
 }
 .btn-outline:hover { border-color: var(--accent-purple); color: var(--accent-purple); }
+.btn-danger-outline {
+  background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red);
+  padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.btn-danger-outline:hover:not(:disabled) { background: var(--accent-red); color: #fff; }
+.btn-danger-outline:disabled { opacity: 0.3; cursor: not-allowed; }
 .btn-sm { padding: 0.4rem 1rem; font-size: 0.8rem; }
 .btn-lg { padding: 0.8rem 2rem; font-size: 1.05rem; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }

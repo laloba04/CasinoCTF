@@ -9,6 +9,7 @@ export default function AuthForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -49,8 +50,22 @@ export default function AuthForm() {
 
           <div className="form-group">
             <label className="form-label">{t('password')}</label>
-            <input className="input" type="password" placeholder={t('enterPassword')}
-              value={password} onChange={e => setPassword(e.target.value)} required minLength={4} />
+            <div style={{ position: 'relative' }}>
+              <input className="input" type={showPassword ? 'text' : 'password'} placeholder={t('enterPassword')}
+                value={password} onChange={e => setPassword(e.target.value)} required minLength={4}
+                style={{ paddingRight: '2.5rem', width: '100%', boxSizing: 'border-box' }} />
+              <button type="button" tabIndex={-1}
+                onClick={() => setShowPassword(s => !s)}
+                style={{
+                  position: 'absolute', right: '0.6rem', top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
+                  fontSize: '1rem', lineHeight: 1, padding: '0.2rem'
+                }}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
 
           {!isLogin && (

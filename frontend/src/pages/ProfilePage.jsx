@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const [ctfSolved, setCtfSolved] = useState(0);
 
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
+  const [pwShow, setPwShow] = useState({ current: false, next: false, confirm: false });
   const [pwMsg, setPwMsg] = useState(null);
   const [pwSaving, setPwSaving] = useState(false);
 
@@ -143,13 +144,29 @@ export default function ProfilePage() {
           ].map(({ key, label }) => (
             <div key={key}>
               <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>{label}</label>
-              <input
-                type="password"
-                className="form-input"
-                value={pwForm[key]}
-                onChange={e => setPwForm(f => ({ ...f, [key]: e.target.value }))}
-                required
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={pwShow[key] ? 'text' : 'password'}
+                  className="form-input"
+                  value={pwForm[key]}
+                  onChange={e => setPwForm(f => ({ ...f, [key]: e.target.value }))}
+                  style={{ paddingRight: '2.5rem', width: '100%', boxSizing: 'border-box' }}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setPwShow(s => ({ ...s, [key]: !s[key] }))}
+                  style={{
+                    position: 'absolute', right: '0.6rem', top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)',
+                    fontSize: '1rem', lineHeight: 1, padding: '0.2rem'
+                  }}
+                  tabIndex={-1}
+                  aria-label={pwShow[key] ? 'Hide password' : 'Show password'}
+                >
+                  {pwShow[key] ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
           ))}
           {pwMsg && (

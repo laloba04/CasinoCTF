@@ -175,6 +175,13 @@ export default {
 
   // Profile
   profileTitle: 'Profile',
+  changePassword: 'Change Password',
+  currentPassword: 'Current Password',
+  newPassword: 'New Password',
+  confirmPassword: 'Confirm New Password',
+  passwordChanged: 'Password changed successfully!',
+  passwordMismatch: 'New passwords do not match',
+  saving: 'Saving...',
   netProfit: 'Net Profit',
   winRate: 'Win Rate',
   ctfFlags: 'CTF Flags',

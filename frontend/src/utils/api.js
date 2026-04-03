@@ -30,6 +30,8 @@ export const api = {
   getScoreboard: () => apiFetch('/api/scoreboard'),
   updateDisplayName: (display_name) =>
     apiFetch('/api/scoreboard/update', { method: 'POST', body: JSON.stringify({ display_name }) }),
+  changePassword: (current_password, new_password) =>
+    apiFetch('/api/auth/change-password', { method: 'POST', body: JSON.stringify({ current_password, new_password }) }),
   getChallenges: () => apiFetch('/api/ctf/challenges'),
   submitFlag: (challenge_id, flag) =>
     apiFetch('/api/ctf/submit', { method: 'POST', body: JSON.stringify({ challenge_id, flag }) }),

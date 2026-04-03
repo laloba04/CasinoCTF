@@ -80,6 +80,35 @@ def login():
         db.close()
 
 
+@auth_bp.route('/api/auth/change-password', methods=['POST'])
+@token_required
+def change_password():
+    data = request.get_json()
+    current_password = data.get('current_password', '')
+    new_password = data.get('new_password', '')
+
+    if not current_password or not new_password:
+        return jsonify({'error': 'Both fields required'}), 400
+    if len(new_password) < 4:
+        return jsonify({'error': 'New password min 4 chars'}), 400
+
+    db = get_db()
+    try:
+        cursor = db.cursor()
+        cursor.execute("SELECT password FROM users WHERE id = %s", (g.user_id,))
+        row = cursor.fetchone()
+        if not row:
+            return jsonify({'error': 'User not found'}), 404
+        stored = row['password'] if isinstance(row, dict) else row[0]
+        if stored != current_password:
+            return jsonify({'error': 'Current password is incorrect'}), 403
+        cursor.execute("UPDATE users SET password = %s WHERE id = %s", (new_password, g.user_id))
+        db.commit()
+        return jsonify({'message': 'Password changed successfully'})
+    finally:
+        db.close()
+
+
 @auth_bp.route('/api/auth/me', methods=['GET'])
 @token_required
 def get_me():

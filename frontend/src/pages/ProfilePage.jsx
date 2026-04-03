@@ -22,6 +22,29 @@ export default function ProfilePage() {
   const [recentGames, setRecentGames] = useState([]);
   const [ctfSolved, setCtfSolved] = useState(0);
 
+  const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
+  const [pwMsg, setPwMsg] = useState(null);
+  const [pwSaving, setPwSaving] = useState(false);
+
+  async function handleChangePassword(e) {
+    e.preventDefault();
+    if (pwForm.next !== pwForm.confirm) {
+      setPwMsg({ type: 'error', text: t('passwordMismatch') });
+      return;
+    }
+    setPwSaving(true);
+    setPwMsg(null);
+    try {
+      await api.changePassword(pwForm.current, pwForm.next);
+      setPwMsg({ type: 'ok', text: t('passwordChanged') });
+      setPwForm({ current: '', next: '', confirm: '' });
+    } catch (err) {
+      setPwMsg({ type: 'error', text: err?.error || 'Error' });
+    } finally {
+      setPwSaving(false);
+    }
+  }
+
   useEffect(() => {
     api.getStats().then(d => setStats(d.stats || [])).catch(() => {});
     api.getHistory(10).then(d => setRecentGames(d.games || [])).catch(() => {});
@@ -106,6 +129,39 @@ export default function ProfilePage() {
           })}
         </div>
       )}
+
+      {/* Change Password */}
+      <div className="card" style={{ marginBottom: '1.5rem', padding: '1.5rem' }}>
+        <h3 style={{ fontFamily: 'Outfit', fontWeight: 700, marginBottom: '1.25rem', fontSize: '1rem' }}>
+          🔑 {t('changePassword')}
+        </h3>
+        <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {[
+            { key: 'current', label: t('currentPassword') },
+            { key: 'next',    label: t('newPassword') },
+            { key: 'confirm', label: t('confirmPassword') },
+          ].map(({ key, label }) => (
+            <div key={key}>
+              <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>{label}</label>
+              <input
+                type="password"
+                className="form-input"
+                value={pwForm[key]}
+                onChange={e => setPwForm(f => ({ ...f, [key]: e.target.value }))}
+                required
+              />
+            </div>
+          ))}
+          {pwMsg && (
+            <p style={{ fontSize: '0.85rem', color: pwMsg.type === 'ok' ? 'var(--accent-green)' : 'var(--accent-red)', margin: 0 }}>
+              {pwMsg.type === 'ok' ? '✓' : '✗'} {pwMsg.text}
+            </p>
+          )}
+          <button type="submit" className="btn btn-primary" disabled={pwSaving} style={{ alignSelf: 'flex-start', marginTop: '0.25rem' }}>
+            {pwSaving ? t('saving') : t('changePassword')}
+          </button>
+        </form>
+      </div>
 
       {/* Recent Games */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>

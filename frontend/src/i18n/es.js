@@ -175,6 +175,13 @@ export default {
 
   // Profile
   profileTitle: 'Perfil',
+  changePassword: 'Cambiar Contraseña',
+  currentPassword: 'Contraseña Actual',
+  newPassword: 'Nueva Contraseña',
+  confirmPassword: 'Confirmar Nueva Contraseña',
+  passwordChanged: '¡Contraseña cambiada con éxito!',
+  passwordMismatch: 'Las contraseñas nuevas no coinciden',
+  saving: 'Guardando...',
   netProfit: 'Beneficio Neto',
   winRate: 'Tasa de Victoria',
   ctfFlags: 'Flags CTF',

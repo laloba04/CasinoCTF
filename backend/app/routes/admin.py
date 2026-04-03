@@ -52,7 +52,7 @@ def toggle_admin(user_id):
     db = get_db()
     try:
         cursor = db.cursor()
-        cursor.execute("UPDATE users SET is_admin = NOT is_admin WHERE id = %s RETURNING is_admin", (user_id,))
+        cursor.execute("UPDATE users SET is_admin = 1 - is_admin WHERE id = %s RETURNING is_admin", (user_id,))
         row = cursor.fetchone()
         if not row:
             return jsonify({'error': 'User not found'}), 404

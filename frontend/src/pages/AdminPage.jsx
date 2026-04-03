@@ -123,11 +123,19 @@ export default function AdminPage() {
                     </td>
                     <td style={{ padding: '0.6rem 1rem' }}>
                       <button
-                        className="btn btn-sm"
-                        style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', background: 'var(--accent-red-dim)', color: 'var(--accent-red)', border: 'none', cursor: 'pointer', borderRadius: '6px' }}
                         onClick={() => handleDelete(u)}
                         disabled={u.id === user?.id || u.is_admin}
                         title={u.is_admin ? t('adminCantDeleteAdmin') : ''}
+                        style={{
+                          fontSize: '0.75rem', padding: '0.3rem 0.75rem',
+                          borderRadius: '6px', border: '1px solid var(--accent-red)',
+                          background: 'transparent', color: 'var(--accent-red)',
+                          cursor: u.id === user?.id || u.is_admin ? 'not-allowed' : 'pointer',
+                          opacity: u.id === user?.id || u.is_admin ? 0.35 : 1,
+                          fontWeight: 600, transition: 'background 0.15s, color 0.15s'
+                        }}
+                        onMouseEnter={e => { if (!(u.id === user?.id || u.is_admin)) { e.target.style.background = 'var(--accent-red)'; e.target.style.color = '#fff'; }}}
+                        onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.color = 'var(--accent-red)'; }}
                       >
                         🗑️ {t('delete')}
                       </button>

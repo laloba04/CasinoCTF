@@ -200,6 +200,7 @@ export default function AdminPage() {
                   {roleBtn(u)}
                   {confirmId === u.id ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--accent-red)', fontWeight: 600 }}>¿Eliminar?</span>
                       <button className="admin-confirm-yes" style={{ fontSize: '0.72rem', padding: '0.2rem 0.55rem' }} onClick={() => handleDelete(u)}>Sí</button>
                       <button className="admin-confirm-no" style={{ fontSize: '0.72rem', padding: '0.2rem 0.45rem' }} onClick={() => setConfirmId(null)}>No</button>
                     </div>

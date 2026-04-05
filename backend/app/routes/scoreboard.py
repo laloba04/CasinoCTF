@@ -11,7 +11,7 @@ def get_scoreboard():
     try:
         cursor = db.cursor()
         cursor.execute(
-            "SELECT display_name, total_winnings, games_played, biggest_win FROM scoreboard ORDER BY total_winnings DESC LIMIT 50"
+            "SELECT user_id, display_name, total_winnings, games_played, biggest_win FROM scoreboard ORDER BY total_winnings DESC LIMIT 50"
         )
         entries = [dict(row) for row in cursor.fetchall()]
         return jsonify({'scoreboard': entries})

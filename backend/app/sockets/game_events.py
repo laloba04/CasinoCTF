@@ -115,8 +115,10 @@ def register_game_events(socketio):
         uid = user.get('user_id')
         username = user.get('username', 'Anonymous')
         if uid:
-            # If joining during payout and this player wasn't part of the hand, reset
+            # If joining during payout and this player wasn't part of the hand,
+            # save existing results then reset so new players can start fresh
             if game.phase == 'payout' and str(uid) not in [str(u) for u in (game.player_order or [])]:
+                _bj_save_results(game, room_id)
                 game.reset()
             game.add_player(uid, username)
         emit('game_state', game.get_state(for_user=uid), room=room_id)
@@ -140,6 +142,7 @@ def register_game_events(socketio):
         if game.phase != 'betting':
             active_uids = [str(u) for u in (game.player_order or [])]
             if str(uid) not in active_uids:
+                _bj_save_results(game, room_id)
                 game.reset()
 
         amount = data.get('amount', 0)
@@ -230,12 +233,8 @@ def register_game_events(socketio):
         room_id = _get_room_id(user, data)
         game = active_games.get(room_id)
         if game:
-            if game.phase == 'payout' and game.results:
-                for uid, res in game.results.items():
-                    _save_game(uid, 'blackjack', room_id, res['total_bet'],
-                              'win' if res['total_payout'] > res['total_bet'] else 'lose',
-                              res['total_payout'])
-            elif game.phase in ('playing', 'dealer_turn') and game.player_order:
+            _bj_save_results(game, room_id)
+            if game.phase in ('playing', 'dealer_turn') and game.player_order:
                 # Refund bets for players whose hand was interrupted
                 for uid in game.player_order:
                     p = game.players.get(uid)
@@ -424,9 +423,30 @@ def register_game_events(socketio):
             return emit('error', result)
         for uid, res in game.results.items():
             if res['details']:
-                _save_game(uid, 'craps', room_id, res['total_bet'],
-                          'win' if res['total_win'] > res['total_bet'] else 'lose', res['total_win'])
+                total_bet = res['total_bet']
+                total_win = res['total_win']
+                if total_win > total_bet:
+                    result = 'win'
+                elif total_win == total_bet:
+                    result = 'push'
+                else:
+                    result = 'lose'
+                _save_game(uid, 'craps', room_id, total_bet, result, total_win)
         emit('game_state', game.get_state(), room=room_id)
+
+    def _bj_save_results(game, room_id):
+        """Save blackjack payout results to DB with correct result classification."""
+        if game.phase == 'payout' and game.results:
+            for uid, res in game.results.items():
+                total_bet = res['total_bet']
+                total_payout = res['total_payout']
+                if total_payout > total_bet:
+                    result = 'win'
+                elif total_payout == total_bet:
+                    result = 'push'
+                else:
+                    result = 'lose'
+                _save_game(uid, 'blackjack', room_id, total_bet, result, total_payout)
 
     def _broadcast_state(game, room_id):
         for sid, info in online_users.items():
@@ -437,12 +457,17 @@ def register_game_events(socketio):
     def _broadcast_holdem_state(game, room_id):
         # Persist holdem results to DB when hand ends
         if game.phase == 'showdown' and game.results:
-            for uid, res in game.results.items():
-                if not str(uid).startswith('BOT'):
-                    total_bet = game.players.get(uid, {}).get('total_bet', 0)
-                    payout = res.get('payout', 0)
-                    _save_game(uid, 'holdem', room_id, total_bet,
-                               'win' if payout > 0 else 'lose', payout)
+            for uid, player in list(game.players.items()):
+                if str(uid).startswith('BOT'):
+                    continue
+                total_bet = player.get('total_bet', 0)
+                if total_bet == 0:
+                    continue
+                res = game.results.get(uid, {})
+                payout = res.get('payout', 0)
+                _deduct_balance(uid, total_bet)
+                _save_game(uid, 'holdem', room_id, total_bet,
+                           'win' if payout > 0 else 'lose', payout)
         for sid, info in online_users.items():
             if info.get('room_id') == room_id:
                 uid = info.get('user_id')

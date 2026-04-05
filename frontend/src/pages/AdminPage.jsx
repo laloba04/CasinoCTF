@@ -86,31 +86,7 @@ export default function AdminPage() {
     </button>
   );
 
-  const deleteBtn = (u) => confirmId === u.id ? (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: '0.3rem',
-      background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)',
-      borderRadius: '8px', padding: '0.25rem 0.45rem'
-    }}>
-      <span style={{ fontSize: '0.68rem', color: 'var(--accent-red)', fontWeight: 600, whiteSpace: 'nowrap' }}>¿Seguro?</span>
-      <button
-        onClick={() => handleDelete(u)}
-        style={{
-          fontSize: '0.72rem', padding: '0.2rem 0.55rem', borderRadius: '5px',
-          border: 'none', background: 'var(--accent-red)', color: '#fff',
-          cursor: 'pointer', fontWeight: 700, letterSpacing: '0.02em'
-        }}
-      >Sí</button>
-      <button
-        onClick={() => setConfirmId(null)}
-        style={{
-          fontSize: '0.72rem', padding: '0.2rem 0.45rem', borderRadius: '5px',
-          border: '1px solid var(--border)', background: 'transparent',
-          color: 'var(--text-muted)', cursor: 'pointer', fontWeight: 500
-        }}
-      >No</button>
-    </div>
-  ) : (
+  const deleteBtn = (u) => (
     <button
       className="btn-danger-outline"
       style={{ padding: '0.28rem 0.65rem', fontSize: '0.75rem' }}
@@ -152,23 +128,35 @@ export default function AdminPage() {
               <span className="admin-col-act">Actions</span>
             </div>
             {users.map(u => (
-              <div key={u.id} className="admin-tbl-row" style={{ opacity: isSelf(u) ? 0.75 : 1 }}>
-                <div className="admin-col-user">
-                  <span style={{ fontWeight: 700 }}>{u.username}</span>
-                  {isSelf(u) && <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', background: 'var(--surface-2)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>{t('you')}</span>}
-                  {u.display_name !== u.username && <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>· {u.display_name}</span>}
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>#{u.id}</span>
-                </div>
-                <div className="admin-col-bal">{balanceInput(u)}</div>
-                <div className="admin-col-stats" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.1rem' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>{u.games_played} {t('gamesPlayed').toLowerCase()}</span>
-                  <span style={{ fontWeight: 600, color: u.total_winnings >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
-                    {u.total_winnings >= 0 ? '+' : ''}${(u.total_winnings || 0).toFixed(0)}
+              confirmId === u.id ? (
+                <div key={u.id} className="admin-confirm-row">
+                  <span className="admin-confirm-text">
+                    ⚠️ ¿Eliminar a <strong>@{u.username}</strong>? Esta acción no se puede deshacer.
                   </span>
+                  <div className="admin-confirm-btns">
+                    <button className="admin-confirm-yes" onClick={() => handleDelete(u)}>🗑️ Eliminar</button>
+                    <button className="admin-confirm-no" onClick={() => setConfirmId(null)}>Cancelar</button>
+                  </div>
                 </div>
-                <div className="admin-col-role" style={{ textAlign: 'center' }}>{roleBtn(u)}</div>
-                <div className="admin-col-act" style={{ display: 'flex', justifyContent: 'flex-end' }}>{deleteBtn(u)}</div>
-              </div>
+              ) : (
+                <div key={u.id} className="admin-tbl-row" style={{ opacity: isSelf(u) ? 0.75 : 1 }}>
+                  <div className="admin-col-user">
+                    <span style={{ fontWeight: 700 }}>{u.username}</span>
+                    {isSelf(u) && <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', background: 'var(--surface-2)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>{t('you')}</span>}
+                    {u.display_name !== u.username && <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>· {u.display_name}</span>}
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>#{u.id}</span>
+                  </div>
+                  <div className="admin-col-bal">{balanceInput(u)}</div>
+                  <div className="admin-col-stats" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.1rem' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>{u.games_played} {t('gamesPlayed').toLowerCase()}</span>
+                    <span style={{ fontWeight: 600, color: u.total_winnings >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+                      {u.total_winnings >= 0 ? '+' : ''}${(u.total_winnings || 0).toFixed(0)}
+                    </span>
+                  </div>
+                  <div className="admin-col-role" style={{ textAlign: 'center' }}>{roleBtn(u)}</div>
+                  <div className="admin-col-act" style={{ display: 'flex', justifyContent: 'flex-end' }}>{deleteBtn(u)}</div>
+                </div>
+              )
             ))}
           </div>
 
@@ -210,7 +198,12 @@ export default function AdminPage() {
                   {balanceInput(u)}
                   <div style={{ flex: 1 }} />
                   {roleBtn(u)}
-                  {deleteBtn(u)}
+                  {confirmId === u.id ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <button className="admin-confirm-yes" style={{ fontSize: '0.72rem', padding: '0.2rem 0.55rem' }} onClick={() => handleDelete(u)}>Sí</button>
+                      <button className="admin-confirm-no" style={{ fontSize: '0.72rem', padding: '0.2rem 0.45rem' }} onClick={() => setConfirmId(null)}>No</button>
+                    </div>
+                  ) : deleteBtn(u)}
                 </div>
               </div>
             ))}

@@ -7,22 +7,22 @@ HINTS = {
     2: [
         "The scoreboard renders display names. What if a name had HTML in it?",
         "Try changing your display name to include a <script> tag.",
-        "Set display_name to: <img src=x onerror=alert(document.cookie)>"
+        "Set display_name to: <img src=x onerror=\"fetch('/api/ctf/xss-flag',{headers:{'Authorization':'Bearer '+localStorage.getItem('casino_token')}}).then(r=>r.json()).then(d=>alert(d.flag))\">"
     ],
     3: [
         "Look at the CTF profile endpoint URL. Notice the user ID?",
         "Try changing the user_id in /api/ctf/profile/{id} to another number.",
-        "Enumerate user IDs: /api/ctf/profile/1, /api/ctf/profile/2, etc."
+        "Access /api/ctf/profile/1 — the admin profile contains something special."
     ],
     4: [
         "Decode your JWT token at jwt.io. Notice the 'alg' field in the header?",
         "What if you change the algorithm to 'none' and remove the signature?",
-        "Craft a token: header={alg:none}, payload={user_id:1,is_admin:true}, signature=''"
+        "Craft a token with alg:none and is_admin:true, then call GET /api/admin/flag with it."
     ],
     5: [
         "Intercept a bet request with Burp Suite or DevTools Network tab.",
         "The bet amount is sent from the client. What if you modify it?",
-        "Send a negative bet or a bet larger than your balance via the API directly."
+        "Send a WebSocket bj_bet event with an amount greater than your balance. Watch the response."
     ],
     6: [
         "Not all API endpoints are shown in the UI. Try common debug paths.",
@@ -32,17 +32,17 @@ HINTS = {
     7: [
         "WebSocket connections sometimes skip authentication checks.",
         "Try connecting to the WebSocket without sending a valid token.",
-        "Connect to Socket.IO without auth and emit game events directly."
+        "Connect to Socket.IO with no auth dict (or {}) and check the 'connected' event payload."
     ],
     8: [
         "Room IDs are short identifiers. Are they validated on join?",
         "Try emitting a 'join_room' event with a room_id you found or guessed.",
-        "Enumerate rooms via /api/rooms, then join one directly via WebSocket."
+        "There is a hidden room called 'admin-private'. Join it via WebSocket and check the 'room_joined' event."
     ],
     9: [
         "Some actions check the game state but don't lock it during processing.",
-        "What happens if you send two 'hit' or 'bet' requests simultaneously?",
-        "Use curl or a script to send multiple requests at the exact same time."
+        "What happens if you send two 'hit' requests simultaneously when your hand is already finished?",
+        "Send a bj_hit WebSocket event after your hand is bust/stand. Check for 'Cannot hit' — the ctf_flag event fires on that socket."
     ]
 }
 

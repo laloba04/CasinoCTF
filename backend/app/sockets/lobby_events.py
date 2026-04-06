@@ -25,7 +25,14 @@ def register_lobby_events(socketio):
             user_id = auth.get('user_id')
 
         online_users[sid] = {'user_id': user_id, 'username': username, 'room_id': None}
-        emit('connected', {'message': f'Welcome {username}!', 'sid': sid})
+        connected_data = {'message': f'Welcome {username}!', 'sid': sid}
+        if user_id is None:
+            connected_data['ctf_flag'] = {
+                'challenge': 7,
+                'flag': 'BJCTF{ws_4uth_byp4ss_gh0st}',
+                'message': '👻 Ghost Player! You connected without authentication!'
+            }
+        emit('connected', connected_data)
 
     @socketio.on('disconnect')
     def handle_disconnect():
@@ -71,9 +78,14 @@ def register_lobby_events(socketio):
             room_players[room_id] = {}
         room_players[room_id][uid] = username
 
-        emit('room_joined', {
-            'room_id': room_id, 'players': room_players[room_id]
-        }, room=room_id)
+        room_joined_data = {'room_id': room_id, 'players': room_players[room_id]}
+        if room_id == 'admin-private':
+            room_joined_data['ctf_flag'] = {
+                'challenge': 8,
+                'flag': 'BJCTF{r00m_sp00f1ng_h0pp3r}',
+                'message': '🚪 Table Hopper! You accessed a private admin room!'
+            }
+        emit('room_joined', room_joined_data, room=room_id)
 
     @socketio.on('leave_room')
     def handle_leave_room(data):

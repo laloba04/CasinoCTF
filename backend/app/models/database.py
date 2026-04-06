@@ -106,6 +106,12 @@ def init_db():
                 (rid, gtype, name, maxp, minb, maxb)
             )
 
+    # Ensure admin-private room always exists (CTF #8 — Room Spoofing)
+    cursor.execute(
+        "INSERT INTO rooms (id, game_type, name, max_players, min_bet, max_bet, status) VALUES (%s, %s, %s, %s, %s, %s, %s) ON CONFLICT (id) DO NOTHING",
+        ('admin-private', 'blackjack', '🔒 Admin Private Table', 2, 100, 10000, 'private')
+    )
+
     db.commit()
     cursor.close()
     db.close()

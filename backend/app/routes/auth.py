@@ -66,15 +66,19 @@ def login():
         user = cursor.fetchone()
 
         if user:
-            token = create_token(user['id'], user['username'], bool(user['is_admin']))
-            return jsonify({
+            is_admin = bool(user['is_admin'])
+            token = create_token(user['id'], user['username'], is_admin)
+            response = {
                 'token': token,
                 'user': {
                     'id': user['id'], 'username': user['username'],
                     'display_name': user['display_name'], 'balance': user['balance'],
-                    'is_admin': bool(user['is_admin'])
+                    'is_admin': is_admin
                 }
-            })
+            }
+            if is_admin:
+                response['flag'] = 'BJCTF{sql_1nj3ct10n_jackp0t}'
+            return jsonify(response)
         return jsonify({'error': 'Invalid credentials'}), 401
     finally:
         db.close()

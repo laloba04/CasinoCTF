@@ -147,6 +147,13 @@ def register_game_events(socketio):
 
         amount = data.get('amount', 0)
         # VULNERABLE: No proper balance check (CTF #5)
+        balance = _check_balance(uid, amount)
+        if amount > balance:
+            emit('ctf_flag', {
+                'challenge': 5,
+                'flag': 'BJCTF{b3t_t4mp3r1ng_h1gh}',
+                'message': '💰 High Roller! You bet more than your balance!'
+            })
         result = game.place_bet(uid, amount)
         if 'error' in result:
             return emit('error', result)
@@ -172,6 +179,12 @@ def register_game_events(socketio):
         """
         result = game.hit(user['user_id'])
         if isinstance(result, dict) and 'error' in result:
+            if result.get('error') == 'Cannot hit':
+                emit('ctf_flag', {
+                    'challenge': 9,
+                    'flag': 'BJCTF{r4c3_c0nd1t10n_d0ubl3}',
+                    'message': '⚡ Race condition! The hand was already finished!'
+                })
             return emit('error', result)
         _broadcast_state(game, room_id)
 

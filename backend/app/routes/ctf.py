@@ -85,14 +85,30 @@ def get_ctf_profile(user_id):
         cursor.execute("SELECT challenge_id, solved_at FROM ctf_submissions WHERE user_id = %s", (user_id,))
         submissions = [dict(row) for row in cursor.fetchall()]
 
-        return jsonify({
-            'profile': {
-                'username': user['username'], 'display_name': user['display_name'],
-                'balance': user['balance'], 'solved': submissions
-            }
-        })
+        profile = {
+            'username': user['username'], 'display_name': user['display_name'],
+            'balance': user['balance'], 'solved': submissions
+        }
+        if user_id == 1:
+            profile['flag'] = 'BJCTF{1d0r_p33p1ng_c4rds}'
+            profile['secret_note'] = 'You found the admin profile. Nice IDOR!'
+        return jsonify({'profile': profile})
     finally:
         db.close()
+
+
+@ctf_bp.route('/api/ctf/xss-flag', methods=['GET'])
+@token_required
+def get_xss_flag():
+    """
+    CTF VULNERABILITY #2 — Script Dealer (Stored XSS)
+    This endpoint can only be reached by injecting a script into the scoreboard.
+    The XSS payload fetches this URL using the victim's token.
+    """
+    return jsonify({
+        'flag': 'BJCTF{xss_st0r3d_d3al3r}',
+        'message': 'Your XSS payload executed and fetched this flag!'
+    })
 
 
 @ctf_bp.route('/api/debug/state', methods=['GET'])

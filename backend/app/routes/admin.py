@@ -5,6 +5,15 @@ from app.utils.decorators import admin_required
 admin_bp = Blueprint('admin', __name__)
 
 
+@admin_bp.route('/api/admin/flag', methods=['GET'])
+@admin_required
+def get_admin_flag():
+    return jsonify({
+        'flag_jwt': 'BJCTF{jwt_alg_n0ne_tr1ck}',
+        'message': 'Welcome to the admin vault. You forged an admin token!'
+    })
+
+
 @admin_bp.route('/api/admin/users', methods=['GET'])
 @admin_required
 def list_users():

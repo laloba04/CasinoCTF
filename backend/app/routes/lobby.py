@@ -15,11 +15,11 @@ def list_rooms():
         game_type = request.args.get('game_type')
         if game_type:
             cursor.execute(
-                "SELECT * FROM rooms WHERE status != 'finished' AND game_type = %s ORDER BY created_at DESC",
+                "SELECT * FROM rooms WHERE status NOT IN ('finished', 'private') AND game_type = %s ORDER BY created_at DESC",
                 (game_type,)
             )
         else:
-            cursor.execute("SELECT * FROM rooms WHERE status != 'finished' ORDER BY created_at DESC")
+            cursor.execute("SELECT * FROM rooms WHERE status NOT IN ('finished', 'private') ORDER BY created_at DESC")
         rooms = [dict(row) for row in cursor.fetchall()]
         return jsonify({'rooms': rooms})
     finally:

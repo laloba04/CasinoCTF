@@ -5,9 +5,13 @@ import { useI18n } from '../hooks/useI18n';
 export default function ScoreboardPage() {
   const { t } = useI18n();
   const [players, setPlayers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.getScoreboard().then(d => setPlayers(d.scoreboard || [])).catch(console.error);
+    api.getScoreboard()
+      .then(d => setPlayers(d.scoreboard || []))
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   const rankIcon = i => i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
@@ -32,7 +36,9 @@ export default function ScoreboardPage() {
           <span className="sb-col sb-hide-sm">{t('biggestWin')}</span>
         </div>
 
-        {players.length === 0 ? (
+        {loading ? (
+          <p className="text-muted text-center" style={{ padding: '3rem' }}>⏳ {t('loading')}</p>
+        ) : players.length === 0 ? (
           <p className="text-muted text-center" style={{ padding: '3rem' }}>{t('noPlayers')}</p>
         ) : players.map((p, i) => (
           <div key={p.user_id} className={`sb-row fade-in ${i < 3 ? 'sb-top' : ''}`}

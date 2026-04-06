@@ -21,10 +21,13 @@ export default function HistoryPage() {
   const [games, setGames] = useState([]);
   const [stats, setStats] = useState([]);
   const [filter, setFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.getHistory(50).then(d => setGames(d.games || [])).catch(console.error);
-    api.getStats().then(d => setStats(d.stats || [])).catch(console.error);
+    Promise.all([
+      api.getHistory(50).then(d => setGames(d.games || [])),
+      api.getStats().then(d => setStats(d.stats || [])),
+    ]).catch(console.error).finally(() => setLoading(false));
   }, []);
 
   const filtered = filter === 'all' ? games : games.filter(g => g.game_type === filter);
@@ -37,7 +40,9 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      <div className="history-layout">
+      {loading && <p className="text-muted text-center" style={{ padding: '3rem' }}>⏳ {t('loading')}</p>}
+
+      <div className="history-layout" style={{ display: loading ? 'none' : undefined }}>
         {/* Sidebar: stats + filters */}
         <div className="history-sidebar">
           {stats.length > 0 && (

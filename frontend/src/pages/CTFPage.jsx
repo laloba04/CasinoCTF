@@ -5,6 +5,7 @@ import { useI18n } from '../hooks/useI18n';
 export default function CTFPage() {
   const { t } = useI18n();
   const [challenges, setChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedChallenge, setSelectedChallenge] = useState(null);
   const [flag, setFlag] = useState('');
   const [hints, setHints] = useState([]);
@@ -12,7 +13,10 @@ export default function CTFPage() {
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    api.getChallenges().then(d => setChallenges(d.challenges)).catch(console.error);
+    api.getChallenges()
+      .then(d => setChallenges(d.challenges || []))
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   const submitFlag = async () => {
@@ -54,7 +58,9 @@ export default function CTFPage() {
         </div>
       </div>
 
-      {selectedChallenge ? (
+      {loading ? (
+        <p className="text-muted text-center" style={{ padding: '3rem' }}>⏳ {t('loading')}</p>
+      ) : selectedChallenge ? (
         <div className="card fade-in">
           <button className="btn btn-outline btn-sm mb-2" onClick={() => {
             setSelectedChallenge(null); setHints([]); setHintLevel(0); setMessage(null); setFlag('');

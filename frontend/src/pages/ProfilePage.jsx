@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const [stats, setStats] = useState([]);
   const [recentGames, setRecentGames] = useState([]);
   const [ctfSolved, setCtfSolved] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
   const [pwShow, setPwShow] = useState({ current: false, next: false, confirm: false });
@@ -47,11 +48,11 @@ export default function ProfilePage() {
   }
 
   useEffect(() => {
-    api.getStats().then(d => setStats(d.stats || [])).catch(() => {});
-    api.getHistory(10).then(d => setRecentGames(d.games || [])).catch(() => {});
-    api.getChallenges().then(d => {
-      setCtfSolved((d.challenges || []).filter(c => c.solved).length);
-    }).catch(() => {});
+    Promise.all([
+      api.getStats().then(d => setStats(d.stats || [])),
+      api.getHistory(10).then(d => setRecentGames(d.games || [])),
+      api.getChallenges().then(d => setCtfSolved((d.challenges || []).filter(c => c.solved).length)),
+    ]).catch(() => {}).finally(() => setLoading(false));
     refreshBalance();
   }, []);
 
@@ -66,7 +67,9 @@ export default function ProfilePage() {
         <h1 className="page-title">👤 {t('profileTitle')}</h1>
       </div>
 
-      <div className="profile-layout">
+      {loading && <p className="text-muted text-center" style={{ padding: '3rem' }}>⏳ {t('loading')}</p>}
+
+      <div className="profile-layout" style={{ display: loading ? 'none' : undefined }}>
         <div className="profile-sidebar">
           {/* Profile Card */}
           <div className="card" style={{

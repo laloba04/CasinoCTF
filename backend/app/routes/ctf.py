@@ -40,7 +40,7 @@ def submit_flag():
         return jsonify({'error': 'Challenge not found'}), 404
 
     if flag != challenge['flag']:
-        return jsonify({'correct': False, 'message': 'Wrong flag, try again!'}), 200
+        return jsonify({'correct': False, 'message': '¡Flag incorrecta, inténtalo de nuevo!'}), 200
 
     db = get_db()
     try:
@@ -50,7 +50,7 @@ def submit_flag():
             (g.user_id, challenge_id, flag)
         )
         db.commit()
-        return jsonify({'correct': True, 'message': f'🎉 Correct! Challenge "{challenge["name"]}" solved!'})
+        return jsonify({'correct': True, 'message': f'🎉 ¡Correcto! Reto "{challenge["name"]}" completado!'})
     finally:
         db.close()
 
@@ -91,7 +91,7 @@ def get_ctf_profile(user_id):
         }
         if user_id == 1:
             profile['flag'] = 'BJCTF{1d0r_p33p1ng_c4rds}'
-            profile['secret_note'] = 'You found the admin profile. Nice IDOR!'
+            profile['secret_note'] = '¡Encontraste el perfil del admin. Buen IDOR!'
         return jsonify({'profile': profile})
     finally:
         db.close()
@@ -107,7 +107,7 @@ def get_xss_flag():
     """
     return jsonify({
         'flag': 'BJCTF{xss_st0r3d_d3al3r}',
-        'message': 'Your XSS payload executed and fetched this flag!'
+        'message': '¡Tu payload XSS se ejecutó y obtuvo esta flag!'
     })
 
 

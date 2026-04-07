@@ -152,7 +152,7 @@ def register_game_events(socketio):
             emit('ctf_flag', {
                 'challenge': 5,
                 'flag': 'BJCTF{b3t_t4mp3r1ng_h1gh}',
-                'message': '💰 High Roller! You bet more than your balance!'
+                'message': '💰 ¡Apuesta Imposible! ¡Apostaste más de tu saldo!'
             })
         result = game.place_bet(uid, amount)
         if 'error' in result:
@@ -183,7 +183,7 @@ def register_game_events(socketio):
                 emit('ctf_flag', {
                     'challenge': 9,
                     'flag': 'BJCTF{r4c3_c0nd1t10n_d0ubl3}',
-                    'message': '⚡ Race condition! The hand was already finished!'
+                    'message': '⚡ ¡Condición de carrera! ¡La mano ya había terminado!'
                 })
             return emit('error', result)
         _broadcast_state(game, room_id)

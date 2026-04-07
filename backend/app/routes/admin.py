@@ -10,7 +10,7 @@ admin_bp = Blueprint('admin', __name__)
 def get_admin_flag():
     return jsonify({
         'flag_jwt': 'BJCTF{jwt_alg_n0ne_tr1ck}',
-        'message': 'Welcome to the admin vault. You forged an admin token!'
+        'message': '¡Bienvenido al panel de admin. Forjaste un token de administrador!'
     })
 
 

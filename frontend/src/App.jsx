@@ -12,6 +12,7 @@ import CTFPage from './pages/CTFPage';
 import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import TutorialsPage from './pages/TutorialsPage';
+import CTFTutorialPage from './pages/CTFTutorialPage';
 import AdminPage from './pages/AdminPage';
 import './index.css';
 
@@ -48,6 +49,7 @@ function AppRoutes() {
         <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/tutorials" element={<ProtectedRoute><TutorialsPage /></ProtectedRoute>} />
+        <Route path="/ctf-tutorial" element={<ProtectedRoute><CTFTutorialPage /></ProtectedRoute>} />
         <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
       </Routes>
     </SocketProvider>

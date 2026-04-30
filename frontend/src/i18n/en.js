@@ -349,6 +349,98 @@ export default {
   tut_slots_ctrl3: 'Total Bet = Bet/Line × Lines.',
   tut_slots_ctrl4: 'Click SPIN to play.',
 
+  // CTF Hacking Tutorial
+  ctfTut_pageTitle: 'Hacking Tutorial',
+  ctfTut_pageSubtitle: 'Learn the techniques to solve all 9 CTF challenges',
+  ctfTut_educationalOnly: 'Educational purposes only',
+  ctfTut_stepsTitle: 'Steps',
+  ctfTut_showCode: 'Show code',
+  ctfTut_hideCode: 'Hide code',
+  ctfTut_relatedChallenges: 'Related challenges',
+  ctfTutorial: 'Hacking Tutorial',
+
+  // Section: Intro
+  ctfTut_introTitle: 'Introduction',
+  ctfTut_introContent: 'CasinoCTF has 9 real vulnerabilities hidden in the application. Your mission is to find them, exploit them, and capture the flags. You don\'t need to be an expert — this tutorial teaches you the basics step by step.',
+  ctfTut_introTip1: 'Each challenge has up to 3 hints. Use them if you get stuck — they\'re on the CTF page.',
+  ctfTut_introTip2: 'Flags follow the format BJCTF{...}. When you find one, paste it in the submission field.',
+  ctfTut_introTip3: 'Inspect everything: source code, network requests, cookies, URLs, and API responses.',
+
+  // Section: DevTools
+  ctfTut_devtoolsTitle: 'DevTools',
+  ctfTut_devtoolsContent: 'The browser Developer Tools (F12) are your main weapon. Use them to view source code, inspect network requests, modify cookies, and execute JavaScript.',
+  ctfTut_devtoolsStep1: 'Press F12 (or right-click → Inspect) to open DevTools.',
+  ctfTut_devtoolsStep2: 'Elements tab: view the page\'s HTML. Look for hidden comments (<!-- ... -->).',
+  ctfTut_devtoolsStep3: 'Console tab: run JavaScript. Try: localStorage.getItem("casino_token")',
+  ctfTut_devtoolsStep4: 'Network tab: see all HTTP and WebSocket requests the app makes.',
+  ctfTut_devtoolsStep5: 'Application tab → Local Storage: view stored data like the JWT token.',
+  ctfTut_devtoolsCodeTitle: 'Useful console commands',
+
+  // Section: SQL Injection
+  ctfTut_sqliTitle: 'SQL Injection',
+  ctfTut_sqliContent: 'SQL Injection (SQLi) happens when the application inserts your input directly into a SQL query without sanitizing it. You can manipulate the query to bypass authentication or extract data.',
+  ctfTut_sqliStep1: 'Go to the application\'s login form.',
+  ctfTut_sqliStep2: 'Type a single quote (\') in the username field. If you see an error, it\'s vulnerable.',
+  ctfTut_sqliStep3: 'Try classic payloads like: admin\'-- or \' OR 1=1 --',
+  ctfTut_sqliStep4: 'The -- at the end comments out the rest of the SQL query, removing the password check.',
+  ctfTut_sqliCodeTitle: 'How injection works',
+  ctfTut_sqliWarning: 'SQL injection is a crime on real systems. Only practice on authorized environments like this CTF.',
+
+  // Section: XSS
+  ctfTut_xssTitle: 'XSS (Cross-Site Scripting)',
+  ctfTut_xssContent: 'XSS happens when the application renders user content as HTML without escaping it. You can inject JavaScript code that runs in other users\' browsers.',
+  ctfTut_xssStep1: 'Look for input fields whose values are displayed on the page (names, messages, etc.).',
+  ctfTut_xssStep2: 'Type simple HTML like <b>test</b>. If the text appears bold, it\'s vulnerable.',
+  ctfTut_xssStep3: 'Try a payload that executes JavaScript: <img src=x onerror="alert(1)">',
+  ctfTut_xssStep4: 'In stored XSS, your payload is saved on the server and affects everyone who visits the page.',
+  ctfTut_xssCodeTitle: 'Common XSS payloads',
+
+  // Section: JWT
+  ctfTut_jwtTitle: 'JWT (JSON Web Tokens)',
+  ctfTut_jwtContent: 'JWTs are used for authentication. They have 3 parts: Header (algorithm), Payload (user data), and Signature. If the server accepts alg: "none", you can forge tokens without the secret key.',
+  ctfTut_jwtStep1: 'Get your token: open the console (F12) and type localStorage.getItem("casino_token")',
+  ctfTut_jwtStep2: 'Paste it on jwt.io to decode it. You\'ll see the header and payload.',
+  ctfTut_jwtStep3: 'Change the "alg" field in the header from "HS256" to "none".',
+  ctfTut_jwtStep4: 'Modify the payload: set "is_admin": true and "username": "admin".',
+  ctfTut_jwtStep5: 'Rebuild the token: base64(header).base64(payload). (no signature, but keep the trailing dot).',
+  ctfTut_jwtCodeTitle: 'Anatomy of a JWT',
+
+  // Section: IDOR
+  ctfTut_idorTitle: 'IDOR (Direct Object Reference)',
+  ctfTut_idorContent: 'IDOR (Insecure Direct Object Reference) happens when you can access other users\' resources by simply changing an ID in the URL or request parameters.',
+  ctfTut_idorStep1: 'Watch the URLs as you navigate the app. Look for numeric IDs (like /profile/5).',
+  ctfTut_idorStep2: 'Change the ID to another number. ID 1 is usually the admin.',
+  ctfTut_idorStep3: 'If you see another user\'s data, the IDOR works! Look for flags or sensitive info.',
+  ctfTut_idorCodeTitle: 'IDOR example',
+
+  // Section: WebSocket
+  ctfTut_wsTitle: 'WebSocket Hacking',
+  ctfTut_wsContent: 'CasinoCTF uses WebSockets (Socket.IO) for real-time gameplay. Sometimes authentication checks are weaker on WebSocket than on HTTP. You can connect without a token or join private rooms.',
+  ctfTut_wsStep1: 'Open DevTools → Network → filter by "WS" to see WebSocket connections.',
+  ctfTut_wsStep2: 'Watch the messages being sent and received (events like join_room, bj_bet, etc.).',
+  ctfTut_wsStep3: 'Try connecting to the WebSocket without sending authentication credentials.',
+  ctfTut_wsStep4: 'Try emitting events like join_room with room IDs that don\'t belong to you.',
+  ctfTut_wsCodeTitle: 'Connect to WebSocket from the console',
+
+  // Section: Intercepting
+  ctfTut_interceptTitle: 'Intercepting Requests',
+  ctfTut_interceptContent: 'Most validations happen on the client (frontend). If you intercept and modify requests before they reach the server, you can bypass bet limits, manipulate data, and exploit race conditions.',
+  ctfTut_interceptStep1: 'Open DevTools → Network and watch requests as you use the app.',
+  ctfTut_interceptStep2: 'Pay attention to the parameters the client sends (amounts, IDs, etc.).',
+  ctfTut_interceptStep3: 'Use the console to send modified requests with fetch() or socket.emit().',
+  ctfTut_interceptStep4: 'What happens if you send a bet larger than your balance? Or two actions at once?',
+  ctfTut_interceptCodeTitle: 'Intercept with JavaScript',
+
+  // Section: Tools
+  ctfTut_toolsTitle: 'Tools',
+  ctfTut_toolsContent: 'These are the most useful tools for solving the challenges. You don\'t need to install anything — the browser DevTools and console are enough for all challenges in this CTF.',
+  ctfTut_tool1: 'Your main tool. Inspect HTML, run JS, analyze network requests and cookies.',
+  ctfTut_tool2: 'Decode and forge JWT tokens in the browser. Essential for the JWT bypass challenge.',
+  ctfTut_tool3: 'HTTP proxy to intercept and modify requests. Useful but not required here.',
+  ctfTut_tool4: 'Send custom HTTP requests. You can use fetch() in the console as an alternative.',
+  ctfTut_tool5: 'Swiss army knife for encoding: Base64, hex, URL encoding, hashes and more.',
+  ctfTut_tool6: 'WebSocket client for the terminal. Alternative: use Socket.IO from the browser console.',
+
   // Craps result phrases (matched against backend strings)
   'Win! Pass bets win.': 'Win! Pass bets win.',
   "Push on Don't Pass.": "Push on Don't Pass.",

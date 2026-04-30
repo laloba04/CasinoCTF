@@ -349,6 +349,98 @@ export default {
   tut_slots_ctrl3: 'Apuesta Total = Apuesta/Línea × Líneas.',
   tut_slots_ctrl4: 'Pulsa GIRAR para jugar.',
 
+  // CTF Hacking Tutorial
+  ctfTut_pageTitle: 'Tutorial de Hacking',
+  ctfTut_pageSubtitle: 'Aprende las técnicas para resolver los 9 retos CTF',
+  ctfTut_educationalOnly: 'Solo con fines educativos',
+  ctfTut_stepsTitle: 'Pasos',
+  ctfTut_showCode: 'Mostrar código',
+  ctfTut_hideCode: 'Ocultar código',
+  ctfTut_relatedChallenges: 'Retos relacionados',
+  ctfTutorial: 'Tutorial Hacking',
+
+  // Section: Intro
+  ctfTut_introTitle: 'Introducción',
+  ctfTut_introContent: 'CasinoCTF tiene 9 vulnerabilidades reales ocultas en la aplicación. Tu misión es encontrarlas, explotarlas y obtener las flags. No necesitas ser experto — este tutorial te enseña paso a paso las técnicas básicas.',
+  ctfTut_introTip1: 'Cada reto tiene hasta 3 pistas. Úsalas si te atascas — están en la página CTF.',
+  ctfTut_introTip2: 'Las flags tienen el formato BJCTF{...}. Cuando la encuentres, pégala en el campo de envío.',
+  ctfTut_introTip3: 'Inspecciona todo: el código fuente, las peticiones de red, las cookies, las URLs y las respuestas de la API.',
+
+  // Section: DevTools
+  ctfTut_devtoolsTitle: 'DevTools',
+  ctfTut_devtoolsContent: 'Las Herramientas de Desarrollo del navegador (F12) son tu arma principal. Con ellas puedes ver el código fuente, las peticiones de red, modificar cookies y ejecutar código JavaScript.',
+  ctfTut_devtoolsStep1: 'Pulsa F12 (o clic derecho → Inspeccionar) para abrir DevTools.',
+  ctfTut_devtoolsStep2: 'Pestaña Elements: ve el HTML de la página. Busca comentarios ocultos (<!-- ... -->).',
+  ctfTut_devtoolsStep3: 'Pestaña Console: ejecuta JavaScript. Prueba: localStorage.getItem("casino_token")',
+  ctfTut_devtoolsStep4: 'Pestaña Network: ve todas las peticiones HTTP y WebSocket que hace la app.',
+  ctfTut_devtoolsStep5: 'Pestaña Application → Local Storage: ve los datos almacenados como el token JWT.',
+  ctfTut_devtoolsCodeTitle: 'Comandos útiles en la consola',
+
+  // Section: SQL Injection
+  ctfTut_sqliTitle: 'SQL Injection',
+  ctfTut_sqliContent: 'SQL Injection (SQLi) ocurre cuando la aplicación inserta tu entrada directamente en una consulta SQL sin sanitizarla. Puedes manipular la consulta para saltarte la autenticación o extraer datos.',
+  ctfTut_sqliStep1: 'Ve al formulario de login de la aplicación.',
+  ctfTut_sqliStep2: "Escribe una comilla simple (') en el campo de usuario. Si ves un error, es vulnerable.",
+  ctfTut_sqliStep3: 'Prueba payloads clásicos como: admin\'-- o \' OR 1=1 --',
+  ctfTut_sqliStep4: 'El -- al final comenta el resto de la consulta SQL, eliminando la comprobación de contraseña.',
+  ctfTut_sqliCodeTitle: 'Cómo funciona la inyección',
+  ctfTut_sqliWarning: 'La inyección SQL es un delito en sistemas reales. Practica solo en entornos autorizados como este CTF.',
+
+  // Section: XSS
+  ctfTut_xssTitle: 'XSS (Cross-Site Scripting)',
+  ctfTut_xssContent: 'XSS ocurre cuando la aplicación renderiza contenido del usuario como HTML sin escaparlo. Puedes inyectar código JavaScript que se ejecutará en el navegador de otros usuarios.',
+  ctfTut_xssStep1: 'Busca campos de entrada cuyos valores se muestren en la página (nombres, mensajes, etc.).',
+  ctfTut_xssStep2: 'Escribe HTML simple como <b>test</b>. Si el texto aparece en negrita, es vulnerable.',
+  ctfTut_xssStep3: 'Prueba con un payload que ejecute JavaScript: <img src=x onerror="alert(1)">',
+  ctfTut_xssStep4: 'En un XSS almacenado, tu payload se guarda en el servidor y afecta a todos los que visiten la página.',
+  ctfTut_xssCodeTitle: 'Payloads XSS comunes',
+
+  // Section: JWT
+  ctfTut_jwtTitle: 'JWT (JSON Web Tokens)',
+  ctfTut_jwtContent: 'Los JWT se usan para autenticación. Están formados por 3 partes: Header (algoritmo), Payload (datos del usuario) y Signature (firma). Si el servidor acepta alg: "none", puedes forjar tokens sin la clave secreta.',
+  ctfTut_jwtStep1: 'Obtén tu token: abre la consola (F12) y escribe localStorage.getItem("casino_token")',
+  ctfTut_jwtStep2: 'Pégalo en jwt.io para decodificarlo. Verás el header y el payload.',
+  ctfTut_jwtStep3: 'Cambia el campo "alg" del header de "HS256" a "none".',
+  ctfTut_jwtStep4: 'Modifica el payload: pon "is_admin": true y "username": "admin".',
+  ctfTut_jwtStep5: 'Reconstruye el token: base64(header).base64(payload). (sin firma, pero con el punto final).',
+  ctfTut_jwtCodeTitle: 'Anatomía de un JWT',
+
+  // Section: IDOR
+  ctfTut_idorTitle: 'IDOR (Referencia Directa)',
+  ctfTut_idorContent: 'IDOR (Insecure Direct Object Reference) ocurre cuando puedes acceder a recursos de otros usuarios simplemente cambiando un ID en la URL o en los parámetros de la petición.',
+  ctfTut_idorStep1: 'Observa las URLs cuando navegas por la app. Busca IDs numéricos (como /profile/5).',
+  ctfTut_idorStep2: 'Cambia el ID por otro número. El ID 1 suele ser el admin.',
+  ctfTut_idorStep3: 'Si ves datos de otro usuario, ¡el IDOR funciona! Busca flags u otra información sensible.',
+  ctfTut_idorCodeTitle: 'Ejemplo de IDOR',
+
+  // Section: WebSocket
+  ctfTut_wsTitle: 'WebSocket Hacking',
+  ctfTut_wsContent: 'CasinoCTF usa WebSockets (Socket.IO) para las partidas en tiempo real. A veces la verificación de autenticación es más débil en WebSocket que en HTTP. Puedes conectarte sin token o unirte a salas privadas.',
+  ctfTut_wsStep1: 'Abre DevTools → Network → filtra por "WS" para ver las conexiones WebSocket.',
+  ctfTut_wsStep2: 'Observa los mensajes que se envían y reciben (eventos como join_room, bj_bet, etc.).',
+  ctfTut_wsStep3: 'Intenta conectarte al WebSocket sin enviar credenciales de autenticación.',
+  ctfTut_wsStep4: 'Prueba a emitir eventos como join_room con IDs de sala que no te pertenecen.',
+  ctfTut_wsCodeTitle: 'Conectarse al WebSocket desde la consola',
+
+  // Section: Intercepting
+  ctfTut_interceptTitle: 'Interceptar Peticiones',
+  ctfTut_interceptContent: 'La mayoría de las validaciones ocurren en el cliente (frontend). Si interceptas y modificas las peticiones antes de que lleguen al servidor, puedes saltarte límites de apuesta, manipular datos y explotar condiciones de carrera.',
+  ctfTut_interceptStep1: 'Abre DevTools → Network y observa las peticiones mientras usas la app.',
+  ctfTut_interceptStep2: 'Fíjate en los parámetros que envía el cliente (importes, IDs, etc.).',
+  ctfTut_interceptStep3: 'Usa la consola para enviar peticiones modificadas con fetch() o socket.emit().',
+  ctfTut_interceptStep4: '¿Qué pasa si envías una apuesta mayor a tu saldo? ¿O dos acciones simultáneas?',
+  ctfTut_interceptCodeTitle: 'Interceptar con JavaScript',
+
+  // Section: Tools
+  ctfTut_toolsTitle: 'Herramientas',
+  ctfTut_toolsContent: 'Estas son las herramientas más útiles para resolver los retos. No necesitas instalar nada — las DevTools del navegador y la consola son suficientes para todos los retos de este CTF.',
+  ctfTut_tool1: 'Tu herramienta principal. Inspecciona HTML, ejecuta JS, analiza peticiones de red y cookies.',
+  ctfTut_tool2: 'Decodifica y forja tokens JWT en el navegador. Esencial para el reto de JWT bypass.',
+  ctfTut_tool3: 'Proxy HTTP para interceptar y modificar peticiones. Útil pero no necesario aquí.',
+  ctfTut_tool4: 'Envía peticiones HTTP personalizadas. Puedes usar fetch() en la consola como alternativa.',
+  ctfTut_tool5: 'Navaja suiza para codificación: Base64, hex, URL encoding, hashes y más.',
+  ctfTut_tool6: 'Cliente WebSocket por terminal. Alternativa: usar Socket.IO desde la consola del navegador.',
+
   // Craps result phrases (matched against backend strings)
   'Win! Pass bets win.': '¡Gana! Pass Line gana.',
   "Push on Don't Pass.": "Empate en Don't Pass.",

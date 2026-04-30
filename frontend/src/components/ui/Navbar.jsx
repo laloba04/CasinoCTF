@@ -46,6 +46,7 @@ export default function Navbar() {
               <Link to="/lobby" className={isActive('/lobby')} onClick={closeMenu}>🃏 {t('lobby')}</Link>
               <Link to="/scoreboard" className={isActive('/scoreboard')} onClick={closeMenu}>🏆 {t('ranking')}</Link>
               <Link to="/ctf" className={isActive('/ctf')} onClick={closeMenu}>🔓 {t('ctf')}</Link>
+              <Link to="/ctf-tutorial" className={isActive('/ctf-tutorial')} onClick={closeMenu}>🛡️ {t('ctfTutorial')}</Link>
               <Link to="/tutorials" className={isActive('/tutorials')} onClick={closeMenu}>📖 <span>{t('tutorials')}</span></Link>
               <Link to="/history" className={isActive('/history')} onClick={closeMenu}>📊 <span>{t('history')}</span></Link>
               <Link to="/profile" className={isActive('/profile')} onClick={closeMenu}>👤 {t('profile')}</Link>
